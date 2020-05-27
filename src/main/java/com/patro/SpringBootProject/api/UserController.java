@@ -19,14 +19,22 @@ import java.util.Optional;
 @Controller
 public class UserController {
 
-    private final UserService userService;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController()
+    {
+
     }
+
+
+//    public UserController(UserService userService) {
+//        this.userService = userService;
+//    }
+
 
     User userObj;
 
@@ -161,7 +169,7 @@ public class UserController {
         if(sessionObj == null)
         {
             modelAndView.setViewName("accessdenied");
-//            return modelAndView;
+           return modelAndView;
         }
         modelAndView.addObject("user", sessionObj);
         modelAndView.setViewName("update");
@@ -211,7 +219,7 @@ public class UserController {
         return mv;
     }
 
-    private boolean isPasswordStrong(String password) {
+    public boolean isPasswordStrong(String password) {
         String regularExpression = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$";
         return password.matches(regularExpression);
     }
