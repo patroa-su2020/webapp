@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>User Details</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+<div class="container">
+    <div class="alert alert-success" role="alert" th:if="${succesfulupdate}" th:utext="${succesfulupdate}">
+    </div>
+    <div class="alert alert-danger" role="alert" th:if="${weakPassword}" th:utext="${weakPassword}">
+    </div>
+    <form th:action="@{/saveupdate}" method="post" th:object="${user}">
+        <h1 class="h3 mb-3 font-weight-normal">Update User Details</h1>
+        <div class="row">
+            <div class="col-md-3 field-label-responsive">
+                <label >First Name</label>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                        <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-user"></i></div>
+                        <input type="text" th:field="*{firstName}" th:value="*{firstName}" class="form-control" id="firstname"
+                               required autofocus>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 field-label-responsive">
+                <label >Last Name</label>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                        <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-user"></i></div>
+                        <input type="text" th:field="*{lastName}" th:value="*{lastName}" class="form-control" id="lastname"
+                               required >
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 field-label-responsive">
+                <label>New Password</label>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                        <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-user"></i></div>
+                        <input type="password" th:field="*{password}" th:value="*{password}" class="form-control" id="password"
+                               placeholder="Password" required >
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Update</button>
+                <a th:href="@{/logout}" class="btn btn-danger btn-block">Logout</a></div></div>
+
+    </form>
+</div>
+</body>
+</html>
