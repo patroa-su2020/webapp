@@ -49,8 +49,12 @@ jobs:
   pr_check:
     docker:
       - image: circleci/openjdk:8-jdk
-  - maven/test
-
+    steps:
+      - checkout
+      - run:
+          command: |
+            mvn clean install
+            mvn test
   build:
     docker:
       - image: circleci/openjdk:8-jdk
@@ -58,7 +62,8 @@ jobs:
       - checkout
       - run:
           command: |
-            maven/test
+            mvn clean install
+            mvn test
 
 workflows:
   version: 2
