@@ -10,18 +10,20 @@ workflows:
 
   build_deploy:
     jobs:
-      build:
-        branches:
-          only:
-            - master
-      docker:
-        - image: circleci/openjdk:8-jdk
-      steps:
-        - checkout
-        - run:
-            name: build
-            command: |
-              - maven/test # checkout, build, test, and upload test results
+      - maven/test # checkout, build, test, and upload test results
+
+#      build:
+#        branches:
+#          only:
+#            - master
+#      docker:
+#        - image: circleci/openjdk:8-jdk
+#      steps:
+#        - checkout
+#        - run:
+#            name: build
+#            command: |
+#              - maven/test # checkout, build, test, and upload test results
 
 
 
