@@ -63,8 +63,7 @@ public class UserController {
 
                 mv.addObject(user);
                 mv.addObject("msg", "User has been registered successfully!");
-                //mv.setViewName("succesfulSignUp");
-
+               
                 System.out.println(user.getFirstName());
                 return mv;
             }
