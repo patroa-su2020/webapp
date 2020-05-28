@@ -29,12 +29,44 @@ public class UserTest {
         return user;
     }
 
-    @Test //Testing password strength
-    public void validatePassword() {
-        final String password1 = "123456";
-        assertThat(userCont.isPasswordStrong(password1)).isFalse();
-        final String password2 = "Password$33";
-        assertThat(userCont.isPasswordStrong(password2)).isTrue();
+    /**
+     * when:  password is strong
+     * then: assert false
+     */
+    @Test
+    public void testIsValidPassword() {
+        final String password = "Password$33";
+        assertThat(userCont.isPasswordStrong(password)).isTrue();
+    }
+
+    /**
+     * when:  password is weak
+     * then: assert true
+     */
+    @Test
+    public void testIsInvalidPassword() {
+        final String password = "123456";
+        assertThat(userCont.isPasswordStrong(password)).isFalse();
+    }
+
+    /**
+     * when:  valid username
+     * then: assert true
+     */
+    @Test
+    public void isValidUsername() {
+        final String username = "ankit.patro@northeastern.edu";
+        assertThat(userCont.isValidEmail(username)).isTrue();
+    }
+
+    /**
+     * when:  invalid username
+     * then: assert false
+     */
+    @Test
+    public void isInvalidUsername() {
+        final String username = "ankit@gmail";
+        assertThat(userCont.isValidEmail(username)).isFalse();
     }
 
 

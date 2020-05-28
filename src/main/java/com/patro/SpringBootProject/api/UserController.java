@@ -14,6 +14,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Controller
@@ -46,24 +48,25 @@ public class UserController {
         mv.setViewName("signup");
         try {
 
-            if(isUserAlreadyRegistered(user.getUsername()))
-            {
+            if (isUserAlreadyRegistered(user.getUsername())) {
                 mv.addObject("alreadyRegistered", "User Account Already Exists!");
                 return mv;
             }
 
-            if(!isPasswordStrong(user.getPassword()))
-            {
-                mv.addObject("weakPassword", "Password too weak!");
+            if (!isValidEmail(user.getUsername())) {
+                mv.addObject("invalidEmail", "Invalid Email Address");
                 return mv;
             }
 
-            else {
+            if (!isPasswordStrong(user.getPassword())) {
+                mv.addObject("weakPassword", "Password too weak!");
+                return mv;
+            } else {
                 userService.addUser(user);
 
                 mv.addObject(user);
                 mv.addObject("msg", "User has been registered successfully!");
-               
+
                 System.out.println(user.getFirstName());
                 return mv;
             }
@@ -94,9 +97,7 @@ public class UserController {
         }
 
         System.out.println("Login Password: " + user.getPassword() + " Encoded Password: " + backendUserOptional.get().getPassword());
-//        if (bCryptPasswordEncoder.matches(user.getPassword(), backendUserOptional.get().getPassword()))
-        if(BCrypt.checkpw(user.getPassword(), backendUserOptional.get().getPassword()))
-        {
+        if (BCrypt.checkpw(user.getPassword(), backendUserOptional.get().getPassword())) {
             System.out.println("Password Matched");
             ModelAndView mv = new ModelAndView();
             mv.setViewName("userdetails");
@@ -116,10 +117,9 @@ public class UserController {
 
     @RequestMapping(value = {"/update"}, method = RequestMethod.GET)
     public ModelAndView getUpdatePageByGetCall(HttpSession session) {
-        User sessionObj= (User) session.getAttribute("userSession");
+        User sessionObj = (User) session.getAttribute("userSession");
         ModelAndView modelAndView = new ModelAndView();
-        if(sessionObj == null)
-        {
+        if (sessionObj == null) {
             modelAndView.setViewName("accessdenied");
             return modelAndView;
         }
@@ -136,10 +136,9 @@ public class UserController {
 
     @RequestMapping(value = {"/update"}, method = RequestMethod.POST)
     public ModelAndView getUpdatePage(HttpSession session) {
-        User sessionObj= (User) session.getAttribute("userSession");
+        User sessionObj = (User) session.getAttribute("userSession");
         ModelAndView modelAndView = new ModelAndView();
-        if(sessionObj == null)
-        {
+        if (sessionObj == null) {
             modelAndView.setViewName("accessdenied");
             return modelAndView;
         }
@@ -158,8 +157,7 @@ public class UserController {
     public ModelAndView getUpdates(@Valid User user, HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
         User sessionObj = (User) session.getAttribute("userSession");
-        if(sessionObj == null)
-        {
+        if (sessionObj == null) {
             modelAndView.setViewName("accessdenied");
             return modelAndView;
         }
@@ -172,15 +170,13 @@ public class UserController {
     public ModelAndView saveUpdates(@Valid User user, HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
         User sessionObj = (User) session.getAttribute("userSession");
-        if(sessionObj == null)
-        {
+        if (sessionObj == null) {
             modelAndView.setViewName("accessdenied");
             return modelAndView;
         }
         modelAndView.setViewName("update");
         modelAndView.addObject("user", user);
-        if(!isPasswordStrong(user.getPassword()))
-        {
+        if (!isPasswordStrong(user.getPassword())) {
             modelAndView.addObject("weakPassword", "Password too weak!");
             return modelAndView;
         }
@@ -188,18 +184,17 @@ public class UserController {
 
         user.setUsername(userObj.getUsername());
         System.out.println("Updated Details " + user.getUsername() + " " + user.getFirstName() + " " + user.getLastName() + " " + user.getPassword());
-      //  user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setPassword(BCrypt.hashpw(user.getPassword(),BCrypt.gensalt() ));
+        //  user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         userService.updateUserDetails(user);
         modelAndView.addObject("succesfulupdate", "User Details Updated Successfully");
         return modelAndView;
     }
 
     @RequestMapping(value = {"/logout"}, method = RequestMethod.GET)
-    public ModelAndView logout(HttpSession session)
-    {
+    public ModelAndView logout(HttpSession session) {
         User u = (User) session.getAttribute("userSession");
-        System.out.println("SESSION OBJECT BEFORE invalidating: "+ u);
+        System.out.println("SESSION OBJECT BEFORE invalidating: " + u);
         session.invalidate();
 //        User u2 = (User) session.getAttribute("userSession");
 //        System.out.println("SESSION OBJECT AFTER invalidating: "+ u);
@@ -216,11 +211,17 @@ public class UserController {
         return password.matches(regularExpression);
     }
 
-    private boolean isUserAlreadyRegistered(String username)
-    {
+    private boolean isUserAlreadyRegistered(String username) {
         Optional<User> existingUser = userService.getUserByUsername(username);
         return existingUser.isPresent();
 
+    }
+
+    public boolean isValidEmail(String emailStr) {
+        Pattern VALID_EMAIL_ADDRESS_REGEX =
+                Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+        return matcher.find();
     }
 
 }
