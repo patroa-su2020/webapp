@@ -6,4 +6,4 @@ orbs:
 workflows:
   pr-check:
     jobs:
-      - maven/test # checkout, build, test, and upload test results
+      - pr_check # checkout, build, test, and upload test results
