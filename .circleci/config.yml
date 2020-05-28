@@ -49,11 +49,8 @@ jobs:
   pr_check:
     docker:
       - image: circleci/openjdk:8-jdk
-    steps:
-      - checkout
-      - run:
-          command: |
-            maven/test
+  - maven/test
+
   build:
     docker:
       - image: circleci/openjdk:8-jdk
