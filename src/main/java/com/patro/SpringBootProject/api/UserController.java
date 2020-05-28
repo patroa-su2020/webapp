@@ -3,6 +3,8 @@ package com.patro.SpringBootProject.api;
 import com.patro.SpringBootProject.model.User;
 import com.patro.SpringBootProject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Optional;
@@ -21,7 +25,7 @@ import java.util.regex.Pattern;
 
 
 @Controller
-public class UserController extends ResponseEntityExceptionHandler {
+public class UserController implements ErrorController {
 
     @Autowired
     private UserService userService;
@@ -32,8 +36,6 @@ public class UserController extends ResponseEntityExceptionHandler {
     public UserController() {
 
     }
-
-    //User userObj;
 
     @RequestMapping(value = {"/signup"}, method = RequestMethod.GET)
     public ModelAndView getSignupPage() {
@@ -90,7 +92,6 @@ public class UserController extends ResponseEntityExceptionHandler {
     @RequestMapping(value = {"/login"}, method = RequestMethod.POST)
     public ModelAndView validateUser(@Valid User user, BindingResult bindingResult, HttpSession session) {
         ModelAndView model = new ModelAndView();
-        System.out.println(user.getUsername() + "  " + user.getPassword());
         model.setViewName("login");
         Optional<User> backendUserOptional = userService.getUserByUsername(user.getUsername());
         if (!backendUserOptional.isPresent()) {
@@ -100,14 +101,11 @@ public class UserController extends ResponseEntityExceptionHandler {
 
         System.out.println("Login Password: " + user.getPassword() + " Encoded Password: " + backendUserOptional.get().getPassword());
         if (BCrypt.checkpw(user.getPassword(), backendUserOptional.get().getPassword())) {
-            System.out.println("Password Matched");
             ModelAndView mv = new ModelAndView();
             mv.setViewName("userdetails");
             User backendUser = backendUserOptional.get();
-            //userObj = backendUser;
             mv.addObject("user", backendUser);
             session.setAttribute("userSession", backendUser);
-            System.out.println("User Details: " + backendUser.getUsername() + " " + backendUser.getFirstName() + " " + backendUser.getLastName());
             mv.addObject("loginsuccessful", "User Logged In Successfully!");
             return mv;
         } else {
@@ -118,12 +116,10 @@ public class UserController extends ResponseEntityExceptionHandler {
     }
 
     @RequestMapping(value = {"/userDetails"}, method = RequestMethod.GET)
-    public ModelAndView getUserDetails(@Valid User user, HttpSession session)
-    {
+    public ModelAndView getUserDetails(@Valid User user, HttpSession session) {
         ModelAndView mv = new ModelAndView();
         User userSessionObj = (User) session.getAttribute("userSession");
-        if(userSessionObj == null)
-        {
+        if (userSessionObj == null) {
             mv.setViewName("accessdenied");
             return mv;
         }
@@ -134,7 +130,7 @@ public class UserController extends ResponseEntityExceptionHandler {
     }
 
     @RequestMapping(value = {"/update"}, method = RequestMethod.GET)
-    public ModelAndView getUpdatePageByGetCall(HttpSession session) {
+    public ModelAndView getUpdatePageByGetCall(@Valid User user, HttpSession session) {
         User sessionObj = (User) session.getAttribute("userSession");
         ModelAndView modelAndView = new ModelAndView();
         if (sessionObj == null) {
@@ -145,12 +141,6 @@ public class UserController extends ResponseEntityExceptionHandler {
         User newUser = userService.getUserByUsername(sessionObj.getUsername()).get();
         modelAndView.addObject("user", newUser);
         modelAndView.setViewName("update");
-//        modelAndView.addObject("user", user);
-       // modelAndView.addObject("user", sessionObj);
-
-
-        System.out.println("Inside getUpdatePage method" + sessionObj);
-//        System.out.println("Inside getUpdatePage method" + userObj.getFirstName() + " " + userObj.getLastName() + " " + userObj.getPassword());
         return modelAndView;
     }
 
@@ -163,13 +153,9 @@ public class UserController extends ResponseEntityExceptionHandler {
             return modelAndView;
         }
 
+        User newUser = userService.getUserByUsername(sessionObj.getUsername()).get();
+        modelAndView.addObject("user", newUser);
         modelAndView.setViewName("update");
-//        modelAndView.addObject("user", user);
-        modelAndView.addObject("user", sessionObj);
-
-
-        System.out.println("Inside getUpdatePage method" + sessionObj);
-//        System.out.println("Inside getUpdatePage method" + userObj.getFirstName() + " " + userObj.getLastName() + " " + userObj.getPassword());
         return modelAndView;
     }
 
@@ -181,7 +167,8 @@ public class UserController extends ResponseEntityExceptionHandler {
             modelAndView.setViewName("accessdenied");
             return modelAndView;
         }
-        modelAndView.addObject("user", sessionObj);
+        User newUser = userService.getUserByUsername(sessionObj.getUsername()).get();
+        modelAndView.addObject("user", newUser);
         modelAndView.setViewName("update");
         return modelAndView;
     }
@@ -203,8 +190,6 @@ public class UserController extends ResponseEntityExceptionHandler {
 
 
         user.setUsername(sessionObj.getUsername());
-        System.out.println("Updated Details " + user.getUsername() + " " + user.getFirstName() + " " + user.getLastName() + " " + user.getPassword());
-        //  user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         userService.updateUserDetails(user);
         modelAndView.addObject("succesfulupdate", "User Details Updated Successfully");
@@ -216,8 +201,6 @@ public class UserController extends ResponseEntityExceptionHandler {
         User u = (User) session.getAttribute("userSession");
         System.out.println("SESSION OBJECT BEFORE invalidating: " + u);
         session.invalidate();
-//        User u2 = (User) session.getAttribute("userSession");
-//        System.out.println("SESSION OBJECT AFTER invalidating: "+ u);
         ModelAndView mv = new ModelAndView();
         User user = new User();
         mv.addObject("user", user);
@@ -244,4 +227,26 @@ public class UserController extends ResponseEntityExceptionHandler {
         return matcher.find();
     }
 
+    @RequestMapping("/error")
+    public ModelAndView handleError(HttpServletRequest httpServletRequest) {
+        Object status = httpServletRequest.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("error");
+        if (status != null) {
+            Integer statusCode = Integer.valueOf(status.toString());
+
+            if (statusCode == HttpStatus.NOT_FOUND.value()) {
+                mv.addObject("notFound", "Page Not Found");
+            } else if (statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+                mv.addObject("serverError", "InternalServerError");
+            }
+        }
+        return mv;
+    }
+
+
+    @Override
+    public String getErrorPath() {
+        return "/error";
+    }
 }
