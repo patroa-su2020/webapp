@@ -12,9 +12,8 @@ workflows:
     jobs:
       build:
         branches:
-        only:
-          - master
-
+          only:
+            - master
       docker:
         - image: circleci/openjdk:8-jdk
       steps:
