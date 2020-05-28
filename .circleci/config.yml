@@ -3,7 +3,22 @@ version: 2.1
 orbs:
   maven: circleci/maven@0.0.12
 
+jobs:
+  pr_check:
+    - maven/test # checkout, build, test, and upload test results
+  build:
+    - maven/test # checkout, build, test, and upload test results
+
+
+
 workflows:
-  maven_test:
+  version2:
+
+  pr-check:
     jobs:
-      - maven/test # checkout, build, test, and upload test results
+      - pr_check
+
+  build_deploy:
+    jobs:
+      - build
+
