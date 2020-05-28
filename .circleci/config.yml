@@ -1,17 +1,17 @@
-version: 2.1
-
-orbs:
-  maven: circleci/maven@0.0.12
-
-workflows:
-  pr-check:
-    jobs:
-      - maven/test # checkout, build, test, and upload test results
-
-  build_deploy:
-    jobs:
-      - maven/test # checkout, build, test, and upload test results
-
+#version: 2.1
+#
+#orbs:
+#  maven: circleci/maven@0.0.12
+#
+#workflows:
+#  pr-check:
+#    jobs:
+#      - maven/test # checkout, build, test, and upload test results
+#
+#  build_deploy:
+#    jobs:
+#      - maven/test # checkout, build, test, and upload test results
+#############################################################################
 #      build:
 #        branches:
 #          only:
@@ -25,6 +25,30 @@ workflows:
 #            command: |
 #              - maven/test # checkout, build, test, and upload test results
 
+
+
+###################
+jobs:
+  pr_check:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - run: mvn clean install
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - run: mvn clean install
+workflows:
+  version: 2
+  pr-check:
+    jobs:
+      - pr_check
+  build_deploy:
+    jobs:
+      - build
 
 
 
