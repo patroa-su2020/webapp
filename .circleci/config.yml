@@ -5,9 +5,16 @@ orbs:
 
 jobs:
   pr_check:
-    - maven/test # checkout, build, test, and upload test results
+    steps:
+      - run: mvn clean
+      - run: mvn install
+
+
   build:
-    - maven/test # checkout, build, test, and upload test results
+    steps:
+      - run: mvn clean
+      - run: mvn install
+
 
 
 
