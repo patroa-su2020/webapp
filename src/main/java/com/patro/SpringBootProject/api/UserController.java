@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -19,7 +21,7 @@ import java.util.regex.Pattern;
 
 
 @Controller
-public class UserController {
+public class UserController extends ResponseEntityExceptionHandler {
 
     @Autowired
     private UserService userService;
@@ -31,7 +33,7 @@ public class UserController {
 
     }
 
-    User userObj;
+    //User userObj;
 
     @RequestMapping(value = {"/signup"}, method = RequestMethod.GET)
     public ModelAndView getSignupPage() {
@@ -102,7 +104,7 @@ public class UserController {
             ModelAndView mv = new ModelAndView();
             mv.setViewName("userdetails");
             User backendUser = backendUserOptional.get();
-            userObj = backendUser;
+            //userObj = backendUser;
             mv.addObject("user", backendUser);
             session.setAttribute("userSession", backendUser);
             System.out.println("User Details: " + backendUser.getUsername() + " " + backendUser.getFirstName() + " " + backendUser.getLastName());
@@ -115,6 +117,22 @@ public class UserController {
 
     }
 
+    @RequestMapping(value = {"/userDetails"}, method = RequestMethod.GET)
+    public ModelAndView getUserDetails(@Valid User user, HttpSession session)
+    {
+        ModelAndView mv = new ModelAndView();
+        User userSessionObj = (User) session.getAttribute("userSession");
+        if(userSessionObj == null)
+        {
+            mv.setViewName("accessdenied");
+            return mv;
+        }
+        mv.setViewName("userdetails");
+        User newUser = userService.getUserByUsername(userSessionObj.getUsername()).get();
+        mv.addObject("user", newUser);
+        return mv;
+    }
+
     @RequestMapping(value = {"/update"}, method = RequestMethod.GET)
     public ModelAndView getUpdatePageByGetCall(HttpSession session) {
         User sessionObj = (User) session.getAttribute("userSession");
@@ -124,9 +142,11 @@ public class UserController {
             return modelAndView;
         }
 
+        User newUser = userService.getUserByUsername(sessionObj.getUsername()).get();
+        modelAndView.addObject("user", newUser);
         modelAndView.setViewName("update");
 //        modelAndView.addObject("user", user);
-        modelAndView.addObject("user", sessionObj);
+       // modelAndView.addObject("user", sessionObj);
 
 
         System.out.println("Inside getUpdatePage method" + sessionObj);
@@ -182,7 +202,7 @@ public class UserController {
         }
 
 
-        user.setUsername(userObj.getUsername());
+        user.setUsername(sessionObj.getUsername());
         System.out.println("Updated Details " + user.getUsername() + " " + user.getFirstName() + " " + user.getLastName() + " " + user.getPassword());
         //  user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));

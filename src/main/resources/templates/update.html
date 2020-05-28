@@ -18,7 +18,10 @@
     <div class="alert alert-danger" role="alert" th:if="${weakPassword}" th:utext="${weakPassword}">
     </div>
     <form th:action="@{/saveupdate}" method="post" th:object="${user}">
-        <h1 class="h3 mb-3 font-weight-normal">Update User Details</h1>
+        <div class="row  mb-4">
+        <h1 class="h3 mb-3 font-weight-normal col-md-3">Update User Details </h1>
+            <a th:href="@{/userDetails}" class="btn btn-success ">User Details</a>
+        </div>
         <div class="row">
             <div class="col-md-3 field-label-responsive">
                 <label >First Name</label>
@@ -67,7 +70,7 @@
             <div class="col-md-3"></div>
             <div class="col-md-6">
         <button class="btn btn-lg btn-primary btn-block" type="submit">Update</button>
-                <a th:href="@{/logout}" class="btn btn-danger btn-block">Logout</a></div></div>
+                <a th:href="@{/logout}" class="btn btn-lg btn-danger btn-block">Logout</a></div></div>
 
     </form>
 </div>
