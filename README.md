@@ -2,7 +2,7 @@
 Web Application Development!
 
 
-# webapp-spring-boot
+# spring-boot application
 
 This project is Cloud Native Application for User Registration
 
