@@ -28,19 +28,43 @@
 
 
 ###################
+#jobs:
+#  pr_check:
+#    docker:
+#      - image: circleci/openjdk:8-jdk
+#    steps:
+#      - checkout
+#      - run: mvn clean install
+#  build:
+#    docker:
+#      - image: circleci/openjdk:8-jdk
+#    steps:
+#      - checkout
+#      - run:
+#          command: |
+#            mvn clean install
+#            mvn test
+########################################
 jobs:
   pr_check:
     docker:
       - image: circleci/openjdk:8-jdk
     steps:
       - checkout
-      - run: mvn clean install
+      - run:
+          command: |
+            mvn clean install
+            mvn test
   build:
     docker:
       - image: circleci/openjdk:8-jdk
     steps:
       - checkout
-      - run: mvn clean install
+      - run:
+          command: |
+            mvn clean install
+            mvn test
+
 workflows:
   version: 2
   pr-check:
