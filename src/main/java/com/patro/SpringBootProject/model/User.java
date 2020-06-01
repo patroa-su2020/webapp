@@ -1,5 +1,7 @@
 package com.patro.SpringBootProject.model;
 
+import org.springframework.context.annotation.Bean;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -62,5 +64,8 @@ public class User {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 '}';
+    }
+
+    public User() {
     }
 }

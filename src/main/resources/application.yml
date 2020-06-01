@@ -1,9 +1,27 @@
+
 app:
   datasource:
     jdbc-url: jdbc:postgresql://localhost:5432/userdb
     username: postgres
     password: password
     pool-size: 30
+    driverClassName: org.postgresql.Driver
+
+jpa:
+  hibernate:
+    ddl-auto: create
+  database-platform: org.hibernate.dialect.PostgreSQLDialect
+#
+#autoconfigure:
+#  exclude:
+#    - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+################################################################
+
+#rg.postgresql.Driver
+
+
+#org.hibernate.dialect.PostgreSQL10Dialect
 
 #spring.datasource.url=jdbc:dbc:postgresql://localhost:5432/persondb
 #spring.datasource.username=postgres
