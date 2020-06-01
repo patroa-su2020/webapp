@@ -16,6 +16,14 @@ public class UserService {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+/*
+    public UserService(){
+        this.userRepository = new ;
+    }
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+*/
 
     public void addUser(User user) {
         String encryptedPassword = bCryptPasswordEncoder.encode(user.getPassword());
