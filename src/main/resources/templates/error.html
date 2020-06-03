@@ -1,7 +1,24 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
+<div class="tab-container">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary navbar-nav-scroll flex-row">
+        <a class="navbar-brand  text-light" th:href="@{/books}"><i class="fa fa-book"></i> Books</a>
+        <a class="navbar-brand  text-light " th:href="@{/userDetails}"><i class="fa fa-user" aria-hidden="true"></i>
+            User Details</a>
+        <a class="navbar-brand  text-light " th:href="@{/createBook}"><i class="fa fa-plus" aria-hidden="true"></i>
+            Create Book</a>
+        <a class="navbar-brand navbar-right  text-light" th:href="@{/myCart}"><i
+                class="fa fa-shopping-cart" aria-hidden="true"></i> My Cart</a>
+        <a class="navbar-brand navbar-right  text-light" th:href="@{/logout}"><i class="fa fa-sign-out"
+                                                                                 aria-hidden="true"></i> Logout</a>
 
+        <button class="navbar-toggler" type="button" data-toggle="collapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+
+</div>
 <head>
     <title>Sign in</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<div class="tab-container">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary navbar-nav-scroll flex-row">
+        <a class="navbar-brand  text-light" th:href="@{/books}"><i class="fa fa-book"></i> Books</a>
+        <a class="navbar-brand  text-light " th:href="@{/userDetails}"><i class="fa fa-user" aria-hidden="true"></i>
+            User Details</a>
+        <a class="navbar-brand  text-light " th:href="@{/createBook}"><i class="fa fa-plus" aria-hidden="true"></i>
+            Create Book</a>
+        <a class="navbar-brand navbar-right  text-light" th:href="@{/myCart}"><i
+                class="fa fa-shopping-cart" aria-hidden="true"></i> My Cart</a>
+        <a class="navbar-brand navbar-right  text-light" th:href="@{/logout}"><i class="fa fa-sign-out"
+                                                                                 aria-hidden="true"></i> Logout</a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+
+</div>
+<head>
+    <title>Update Book</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"
+          id="bootstrap-css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+</head>
+
+
+<body>
+<div class="container">
+    <form class="form-horizontal" role="form" method="POST"
+          th:action="@{'/saveUpdateBook/'+${updateBook.bookId}+'/'+${updateBook.createDateTime}}"
+          th:object="${updateBook}">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <!--/*@thymesVar id="msg" type="java"*/-->
+                <div class="alert alert-success" role="alert" th:if="${saveUpdateSuccess}"
+                     th:utext="${saveUpdateSuccess}">
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <h2>Update Book</h2>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 field-label-responsive">
+                <label>ISBN</label>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                        <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-book"></i></div>
+                        <input type="number" min="1000000000" max="9999999999" th:field="*{isbn}" class="form-control" id="isbn" th:value="*{isbn}"
+                               placeholder="ISBN" required autofocus>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 field-label-responsive">
+                <label>Title</label>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                        <div class="input-group-addon" style="width: 2.6rem"></div>
+                        <input type="text" th:field="*{title}" class="form-control" id="title" th:value="*{title}"
+                               placeholder="Title" required autofocus>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 field-label-responsive">
+                <label>Authors</label>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                        <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-user"></i>
+                        </div>
+                        <input type="text" th:field="*{authors}" class="form-control" id="authors" th:value="*{authors}"
+                               placeholder="Author" required autofocus>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-control-feedback">
+                    <!--                         <span class="text-danger align-middle" th:if="${#fields.hasErrors('email')}" th:errors="*{username}">-->
+                    <!--                         </span>-->
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 field-label-responsive">
+                <label>Publication Date</label>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group has-danger">
+                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                        <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-calendar"></i></div>
+                        <input type="date" th:field="*{publicationDate}" class="form-control" id="publicationDate"
+                               th:value="*{publicationDate}"
+                               placeholder="Publication Date" required>
+                    </div>
+                </div>
+            </div>
+            <!--            <div class="col-md-3">-->
+            <!--                <div class="form-control-feedback">-->
+            <!--                         <span class="text-danger align-middle" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">-->
+            <!--                         </span>-->
+            <!--                </div>-->
+            <!--            </div>-->
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 field-label-responsive">
+                <label>Quantity</label>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                        <div class="input-group-addon" style="width: 2.6rem"><i class="fas fa-envelope-square"></i>
+                        </div>
+                        <input type="number" min="0" max="999" th:field="*{quantity}" class="form-control" id="quantity"
+                               th:value="*{quantity}"
+                               placeholder="quantity" required autofocus>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-control-feedback">
+                    <!--                         <span class="text-danger align-middle" th:if="${#fields.hasErrors('email')}" th:errors="*{username}">-->
+                    <!--                         </span>-->
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 field-label-responsive">
+                <label>Price</label>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                        <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-money" aria-hidden="true"></i>
+                        </div>
+                        <input type="number" step="0.01" min="0.01" max="999.99" th:field="*{price}" th:value="*{price}"
+                               class="form-control" id="price"
+                               placeholder="price" required autofocus>
+                        <!--                        <input type="text" th:field="*{bookId}" class="form-control" id="bookId" th:value="*{bookId}" disabled>-->
+                        <!--                        <input type="number" th:field="*{createDateTime}" class="form-control" id="createDateTime" th:value="*{createDateTime}" disabled>-->
+                        <!--                        <input type="hidden" th:field="*{updateDateTime}" class="form-control" id="updateDateTime" th:value="*{updateDateTime}" disabled>-->
+                        <!--                        <input type="hidden" th:field="*{sellerName}" class="form-control" id="sellerName" th:value="*{sellerName}" disabled>-->
+                        <!--                        <input type="text" th:field="*{sellerId}" class="form-control" id="sellerId" th:value="*{sellerId}" disabled>-->
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-control-feedback">
+                    <!--                         <span class="text-danger align-middle" th:if="${#fields.hasErrors('email')}" th:errors="*{username}">-->
+                    <!--                         </span>-->
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 field-label-responsive">
+                <label>Create Date Time</label>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                        <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-clock"></i>
+                        </div>
+                        <input type="text"
+                               th:value="${createDtTm}"
+                               class="form-control" id="createDtTm" readonly
+                               required autofocus>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-control-feedback">
+                    <!--                         <span class="text-danger align-middle" th:if="${#fields.hasErrors('email')}" th:errors="*{username}">-->
+                    <!--                         </span>-->
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 field-label-responsive">
+                <label>Update Date Time</label>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                        <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-clock"></i>
+                        </div>
+                        <input type="text"
+                               th:value="${updateDtTm}"
+                               class="form-control" id="text" readonly
+                               required autofocus>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-control-feedback">
+                    <!--                         <span class="text-danger align-middle" th:if="${#fields.hasErrors('email')}" th:errors="*{username}">-->
+                    <!--                         </span>-->
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <button type="submit" class="btn btn-success"><i class="fa fa-user-plus"></i> Update</button>
+                <!--                <a th:href="@{/login}" class="btn btn-primary">Login</a>-->
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

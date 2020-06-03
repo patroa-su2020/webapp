@@ -2,10 +2,8 @@ package com.patro.SpringBootProject.model;
 
 import org.springframework.context.annotation.Bean;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "user_data")
@@ -23,6 +21,10 @@ public class User {
 
     @Column(name = "last_name")
     private String lastName;
+
+//    @ManyToMany(cascade=CascadeType.ALL)
+//    @JoinTable(name="user_data", joinColumns=@JoinColumn(name="email"), inverseJoinColumns=@JoinColumn(name="role_id"))
+//    private Set<Role> roles;
 
     public String getUsername() {
         return username;
