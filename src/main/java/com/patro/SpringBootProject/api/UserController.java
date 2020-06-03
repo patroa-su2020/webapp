@@ -372,8 +372,9 @@ public class UserController implements ErrorController {
 //    @RequestMapping(value = {"/xyz"}, method = RequestMethod.POST)
     public ModelAndView updateBook(@PathVariable String bookId, HttpSession session) {
         ModelAndView mv = new ModelAndView();
+        Book book = bookService.getBookById(bookId);
         User user = (User) session.getAttribute("userSession");
-        if (user == null) {
+        if (user == null || !user.getUsername().equals(book.getSellerId())) {
             mv.setViewName("accessdenied");
             return mv;
         }
@@ -381,7 +382,7 @@ public class UserController implements ErrorController {
 
         mv.setViewName("updateBook");
 //        System.out.println("Update Book" + bookId);
-        Book book = bookService.getBookById(bookId);
+
         mv.addObject("updateBook", book);
         DateFormat simple = new SimpleDateFormat("dd MMM yyyy HH:mm:ss:SSS Z");
         Date date1 = new Date(book.getCreateDateTime());
