@@ -11,6 +11,7 @@ jpa:
   hibernate:
     ddl-auto: create
   database-platform: org.hibernate.dialect.PostgreSQLDialect
+  show-sql: true
 #
 #autoconfigure:
 #  exclude:
