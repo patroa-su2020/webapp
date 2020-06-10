@@ -1,13 +1,7 @@
 package com.patro.SpringBootProject.api;
 
-import com.patro.SpringBootProject.model.Book;
-import com.patro.SpringBootProject.model.Cart;
-import com.patro.SpringBootProject.model.Role;
-import com.patro.SpringBootProject.model.User;
-import com.patro.SpringBootProject.service.BookService;
-import com.patro.SpringBootProject.service.CartService;
-import com.patro.SpringBootProject.service.RoleService;
-import com.patro.SpringBootProject.service.UserService;
+import com.patro.SpringBootProject.model.*;
+import com.patro.SpringBootProject.service.*;
 
 import dto.BookDTO;
 import dto.CartDTO;
@@ -52,7 +46,6 @@ public class UserController implements ErrorController {
 
     @Autowired
     CartService cartService;
-
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -226,7 +219,6 @@ public class UserController implements ErrorController {
         modelAndView.addObject("succesfulupdate", "User Details Updated Successfully");
         return modelAndView;
     }
-
 
     @RequestMapping(value = {"/logout"}, method = RequestMethod.GET)
     public ModelAndView logout(HttpSession session) {

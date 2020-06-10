@@ -7,11 +7,11 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication(exclude = { SecurityAutoConfiguration.class ,DataSourceAutoConfiguration.class})
-//@EnableJpaRepositories(basePackages = "com.patro.SpringBootProject.dao")
-//@EntityScan("com.patro.SpringBootProject")
+@SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
+@ComponentScan(basePackages = {"com.patro.SpringBootProject.dao","com.patro.SpringBootProject.api","com.patro.SpringBootProject.configuration", "com.patro.SpringBootProject.service"})
 public class WebApp extends SpringBootServletInitializer {
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
