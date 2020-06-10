@@ -1,41 +1,41 @@
-
-app:
-  datasource:
-    jdbc-url: jdbc:postgresql://localhost:5432/userdb
-    username: postgres
-    password: password
-    pool-size: 30
-    driverClassName: org.postgresql.Driver
-
-jpa:
-  hibernate:
-    ddl-auto: create
-  database-platform: org.hibernate.dialect.PostgreSQLDialect
-  show-sql: true
 #
-#autoconfigure:
-#  exclude:
-#    - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-
-################################################################
-
-#rg.postgresql.Driver
-
-
-#org.hibernate.dialect.PostgreSQL10Dialect
-
-#spring.datasource.url=jdbc:dbc:postgresql://localhost:5432/persondb
-#spring.datasource.username=postgres
-#spring.datasource.password=password
-server:
-  port: 8081
-
+#app:
+#  datasource:
+#    jdbc-url: jdbc:postgresql://localhost:5432/userdb
+#    username: postgres
+#    password: password
+#    pool-size: 30
+#    driverClassName: org.postgresql.Driver
+#
+#jpa:
+#  hibernate:
+#    ddl-auto: create
+#  database-platform: org.hibernate.dialect.PostgreSQLDialect
+#  show-sql: true
+##
+##autoconfigure:
+##  exclude:
+##    - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+#
+#################################################################
+#
+##rg.postgresql.Driver
+#
+#
+##org.hibernate.dialect.PostgreSQL10Dialect
+#
+##spring.datasource.url=jdbc:dbc:postgresql://localhost:5432/persondb
+##spring.datasource.username=postgres
+##spring.datasource.password=password
+#server:
+#  port: 8081
+#
+##spring:
+##  mvc:
+##    view:
+##      prefix: /WEB-INF/view/
+##      suffix: .jsp
 #spring:
-#  mvc:
-#    view:
-#      prefix: /WEB-INF/view/
-#      suffix: .jsp
-spring:
-  thymeleaf:
-    mode: LEGACYHTML5
-    cache: false
+#  thymeleaf:
+#    mode: LEGACYHTML5
+#    cache: false
