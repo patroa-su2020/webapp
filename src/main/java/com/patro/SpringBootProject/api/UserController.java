@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.RequestDispatcher;
@@ -49,6 +50,9 @@ public class UserController implements ErrorController {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private ImageService imageService;
 
     public UserController() {
 
@@ -329,7 +333,9 @@ public class UserController implements ErrorController {
     }
 
     @RequestMapping(value = {"/saveBook"}, method = RequestMethod.POST)
-    public ModelAndView saveBook(HttpSession session, @Valid Book bookDTO, BindingResult bindingResult) {
+    public ModelAndView saveBook(HttpSession session, @Valid Book bookDTO, BindingResult bindingResult, @RequestPart(value = "files") MultipartFile[] files) {
+
+
         ModelAndView model = new ModelAndView();
         User sessionObj = (User) session.getAttribute("userSession");
 //        System.out.println(sessionObj);
@@ -338,7 +344,12 @@ public class UserController implements ErrorController {
             return model;
         }
 
-        bookDTO.setBookId(UUID.randomUUID().toString());
+//        System.out.println(files[1].getOriginalFilename());
+//        System.out.println(files[0].getOriginalFilename());
+
+
+        String bookId = UUID.randomUUID().toString();
+        bookDTO.setBookId(bookId);
         bookDTO.setCreateDateTime(System.currentTimeMillis());
         bookDTO.setSellerId(sessionObj.getUsername());
         bookDTO.setSellerName(sessionObj.getFirstName() + " " + sessionObj.getLastName());
@@ -346,7 +357,24 @@ public class UserController implements ErrorController {
         model.addObject("bookDTO", bookDTO);
 
         System.out.println(bookDTO);
+        Set<String> fileUrls = null;
+        try {
+            fileUrls = imageService.uploadPictures(files);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //   if(!fileUrls.isEmpty())  bookDTO.setImageURLs(fileUrls.toString());
+        System.out.println(fileUrls.toString());
+        Set<Image> imageSet = new HashSet<>();
+        for (String url : fileUrls) {
+            Image image = new Image();
+            image.setImageId(UUID.randomUUID().toString());
+            image.setImageUrl(url);
+            image.setBookId(bookId);
+            imageService.addImages(image);
 
+        }
+        //  bookDTO.setImages(imageSet);
         bookService.saveBook(bookDTO);
         model.addObject("saveSuccess", "New Book Created Successfully");
         return model;
@@ -406,8 +434,14 @@ public class UserController implements ErrorController {
             return;
         }
 
-        if (book != null)
+        if (book != null) {
+            List<Image> images = imageService.getImagesByBookId(bookId);
+            for (Image image : images) {
+                imageService.deleteFileFromS3Bucket(image.getImageUrl());
+                imageService.deleteImage(image);
+            }
             bookService.deleteBookById(bookId);
+        }
         System.out.println("Book Deleted" + book.getTitle());
         response.sendRedirect("/books");
     }
@@ -494,6 +528,65 @@ public class UserController implements ErrorController {
         return dtf.format(now);
     }
 
+    @RequestMapping(value = {"/viewImages/{bookId}/{sellerId}"}, method = RequestMethod.GET)
+    public ModelAndView getImages(HttpSession session, @PathVariable String bookId, @PathVariable String sellerId) {
+        boolean isSeller = false;
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("images");
+        User sessionUser = (User) session.getAttribute("userSession");
+        if (sessionUser != null && sessionUser.getUsername().equals(sellerId))
+            isSeller = true;
+        //   List<Image> imageList = imageService.getImagesByBookId(bookId);
+        System.out.println("Image for book id:" + bookId);
+        List<Image> imageList = imageService.getImagesByBookId(bookId);
+
+        mv.addObject(imageList);
+        mv.addObject(bookId);
+        mv.addObject("isSeller", isSeller);
+
+        return mv;
+
+    }
+
+    @RequestMapping(value = {"/addNewImage/{bookId}"}, method = RequestMethod.POST)
+    public void addNewImages(HttpServletResponse response, HttpSession session, @PathVariable String bookId, @RequestPart(value = "files") MultipartFile[] files) throws IOException {
+
+        System.out.println(bookId);
+        Book book = bookService.getBookById(bookId);
+        Set<String> fileUrls = null;
+        try {
+            fileUrls = imageService.uploadPictures(files);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //   if(!fileUrls.isEmpty())  bookDTO.setImageURLs(fileUrls.toString());
+        System.out.println(fileUrls.toString());
+        Set<Image> imageSet = new HashSet<>();
+        for (String url : fileUrls) {
+            Image image = new Image();
+            image.setImageId(UUID.randomUUID().toString());
+            image.setImageUrl(url);
+            image.setBookId(bookId);
+            imageService.addImages(image);
+
+
+        }
+        response.sendRedirect("/viewImages/" + bookId + "/" + book.getSellerId());
+        return;
+    }
+
+    @RequestMapping(value = {"/deleteImage/{imageId}/{bookId}"}, method = RequestMethod.GET)
+    public void deleteImage(HttpSession session, @PathVariable String imageId, @PathVariable String bookId, HttpServletResponse response) throws IOException {
+        ModelAndView mv = new ModelAndView();
+        Image image = imageService.getImageByImageId(imageId);
+        imageService.deleteFileFromS3Bucket(image.getImageUrl());
+        imageService.deleteImage(image);
+        Book book = bookService.getBookById(bookId);
+        response.sendRedirect("/viewImages/" + bookId + "/" + book.getSellerId());
+        return;
+
+    }
+
     @RequestMapping(value = {"/books"}, method = RequestMethod.GET)
     public ModelAndView getBooksPage(HttpSession session, @Valid Book book, BindingResult bindingResult) {
         ModelAndView mv = new ModelAndView();
@@ -516,17 +609,21 @@ public class UserController implements ErrorController {
 
         List<BookDTO> bookDTOS = new ArrayList<>();
         for (Book b : books) {
-
-            if (userSession != null && userSession.getUsername().equals(b.getSellerId()))
-                bookDTOS.add(new BookDTO(b, true));
-            else {
+            // String bookId = book.getBookId();
+            List<Image> images = imageService.getImagesByBookId("8c7b6915-aaa2-4c85-aa86-f996ac54ad91");
+            if (userSession != null && userSession.getUsername().equals(b.getSellerId())) {
+                BookDTO bookDTO = new BookDTO(b, true);
+                if (images != null) bookDTO.setImages(images);
+                bookDTOS.add(bookDTO);
+            } else {
                 if (Integer.parseInt(b.getQuantity()) == 0) continue;
-                bookDTOS.add(new BookDTO(b, false));
+                BookDTO bookDTO = new BookDTO(b, false);
+                if (images != null) bookDTO.setImages(images);
+                bookDTOS.add(bookDTO);
             }
+
         }
 
-
-        System.out.println(books.get(0));
         mv.addObject("bookDtos", bookDTOS);
         return mv;
     }

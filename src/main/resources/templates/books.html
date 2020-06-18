@@ -102,6 +102,11 @@
 
         <td th:if="${!bookDto.seller}"><a th:href="@{'/addToCart/'+${bookDto.book.bookId}}" class="btn btn-success"><i
                 class="fa fa-shopping-cart" aria-hidden="true"></i> Add to cart </a></td>
+
+<!--        <td ><span th:text="${bookDto.images.get(0).imageUrl}"></span><a th:href="@{${bookDto.images.iterator().next()}}" class="btn btn-success"><i-->
+<!--                class="fa fa-shopping-cart" aria-hidden="true"></i></a>-->
+        <td ><a th:href="@{'/viewImages/'+${bookDto.book.bookId}+'/'+${bookDto.book.sellerId}}" class="btn btn-success"><i
+                class="fa fa-shopping-cart" aria-hidden="true"></i> View Images </a></td>
     </tr>
     </tbody>
 </table>
