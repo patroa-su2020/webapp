@@ -1,10 +1,8 @@
 package com.patro.SpringBootProject.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "book_data")
@@ -43,6 +41,28 @@ public class Book {
 
     @Column(name = "seller_id")
     private String sellerId;
+
+//    @Column(name = "image")
+//    private String imageURLs;
+
+//    @OneToMany(mappedBy="book")
+//    private Set<Image> images;
+
+//    public Set<Image> getImages() {
+//        return images;
+//    }
+//
+//    public void setImages(Set<Image> images) {
+//        this.images = images;
+//    }
+
+//    public String getImageURLs() {
+//        return imageURLs;
+//    }
+//
+//    public void setImageURLs(String imageURLs) {
+//        this.imageURLs = imageURLs;
+//    }
 
     public String getBookId() {
         return bookId;

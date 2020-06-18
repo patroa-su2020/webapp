@@ -1,8 +1,11 @@
 package dto;
 
 import com.patro.SpringBootProject.model.Book;
+import com.patro.SpringBootProject.model.Image;
 
 import javax.persistence.Column;
+import java.util.List;
+import java.util.Set;
 
 
 public class BookDTO {
@@ -129,10 +132,19 @@ public class BookDTO {
 
     private Book book;
     private boolean isSeller;
+    private List<Image> images;
 
     public BookDTO(Book book, boolean isSeller) {
         this.book = book;
         this.isSeller = isSeller;
+    }
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
     }
 
     public Book getBook() {
