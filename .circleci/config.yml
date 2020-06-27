@@ -61,9 +61,57 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install ZIP, AWS CLI and build JAR
           command: |
-            mvn clean install
+            sudo apt-get update && sudo apt-get install wget zip unzip -y
+            sudo apt-get install -y python3-pip
+            sudo pip3 install awscli
             mvn test
+            mvn clean install
+      - run:
+          name: Create ZIP file
+          command: |
+            echo "Current build number - ${CIRCLE_BUILD_NUM}
+            pwd
+            ls -al
+            mkdir artifacts
+            chmod 755 artifacts
+            zip -r csye6225-webapp-${CIRCLE_BUILD_NUM}.zip target/webapp-0.0.1-SNAPSHOT.jar codedeploy/*.sh appspec.yml
+            pwd
+            ls -al
+            chmod 755 csye6225-webapp-${CIRCLE_BUILD_NUM}.zip
+            sudo mv csye6225-webapp-${CIRCLE_BUILD_NUM}.zip artifacts/
+            cd artifacts
+            ls -al
+            pwd
+            cd ..
+            ls -al
+      - run:
+          name: AWS CLI Credentials
+          command: aws configure list
+
+      - run:
+          name: Upload ZIP to S3
+          command: aws s3 cp artifacts/csye6225-webapp-${CIRCLE_BUILD_NUM}.zip s3://${CODEDEPLOY_S3BUCKET}/csye6225-webapp-${CIRCLE_BUILD_NUM}.zip
+
+      - run:
+          name: Create Deployment
+          command: aws deploy create-deployment --application-name csye6225-webapp --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name csye6225-webapp-deployment --description "CSYE6225 - Codedeploy" --region=${AWS_REGION} --s3-location bucket=codedeploy.${DOMAIN_NAME},bundleType=zip,key=csye6225-webapp-${CIRCLE_BUILD_NUM}.zip
+
+
+
+  install_aws_cli:
+    docker:
+      - image: circleci/python:3.6.8-jessie
+    steps:
+      - checkout
+      - run:
+          command: |
+            sudo apt-get update && sudo apt-get install wget zip unzip -y
+      - run:
+          command: |
+            sudo pip3 install awscli
+
 
 workflows:
   version: 2
@@ -73,6 +121,7 @@ workflows:
   build_deploy:
     jobs:
       - build
+      - install_aws_cli
 
 
 
