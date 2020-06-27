@@ -71,7 +71,7 @@ jobs:
       - run:
           name: Create ZIP file
           command: |
-            echo "Current build number - ${CIRCLE_BUILD_NUM}
+            echo "Current build number - ${CIRCLE_BUILD_NUM}"
             pwd
             ls -al
             mkdir artifacts
