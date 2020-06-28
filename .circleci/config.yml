@@ -101,7 +101,7 @@ jobs:
           command: |
             pwd
             cd artifacts/
-            chmod 777 csye6225-webapp-${CIRCLE_BUILD_NUM}.zip
+            chmod 755 csye6225-webapp-${CIRCLE_BUILD_NUM}.zip
             ls -al
             aws s3 cp csye6225-webapp-${CIRCLE_BUILD_NUM}.zip s3://codedeploy.ankitpatro.me
 
