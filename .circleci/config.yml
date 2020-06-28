@@ -45,6 +45,7 @@
 #            mvn clean install
 #            mvn test
 ########################################
+version: 2.1
 jobs:
   pr_check:
     docker:
@@ -66,6 +67,8 @@ jobs:
             sudo apt-get update && sudo apt-get install wget zip unzip -y
             sudo apt-get install -y python3-pip
             sudo pip3 install awscli
+            echo "AWS VERSION"
+            aws --version
             mvn test
             mvn clean install
       - run:
