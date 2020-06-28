@@ -74,25 +74,33 @@ jobs:
             echo "Current build number - ${CIRCLE_BUILD_NUM}"
             pwd
             ls -al
+            echo "Create artifacts directory"
             mkdir artifacts
+            cd artifacts/
+            echo "Contents inside artifacts directory"
+            ls -al
+            cd ..
             chmod 755 artifacts
             zip -r csye6225-webapp-${CIRCLE_BUILD_NUM}.zip target/webapp-0.0.1-SNAPSHOT.jar codedeploy/*.sh appspec.yml
             pwd
             ls -al
             chmod 755 csye6225-webapp-${CIRCLE_BUILD_NUM}.zip
-            sudo mv csye6225-webapp-${CIRCLE_BUILD_NUM}.zip artifacts/
-            cd artifacts
+            sudo mv csye6225-webapp-${CIRCLE_BUILD_NUM}.zip artifacts
+            echo "Go Inside artifacts directory"
+            cd artifacts/
+            echo "Contents inside artifacts directory"
             ls -al
             pwd
             cd ..
             ls -al
-      - run:
-          name: AWS CLI Credentials
-          command: aws configure list
 
       - run:
           name: Upload ZIP to S3
-          command: aws s3 cp artifacts/csye6225-webapp-${CIRCLE_BUILD_NUM}.zip s3://${CODEDEPLOY_S3BUCKET}/csye6225-webapp-${CIRCLE_BUILD_NUM}.zip
+          command: |
+            pwd
+            cd artifacts/
+            ls -al
+            aws s3 cp csye6225-webapp-${CIRCLE_BUILD_NUM}.zip s3://codedeploy.ankitpatro.me/csye6225-webapp-${CIRCLE_BUILD_NUM}.zip
 
       - run:
           name: Create Deployment
