@@ -92,7 +92,7 @@ public class UserController implements ErrorController {
                 mv.addObject(user);
                 mv.addObject("msg", "User has been registered successfully!");
 
-                System.out.println(user.getFirstName());
+//                System.out.println(user.getFirstName());
                 return mv;
             }
         } catch (Exception e) {
@@ -112,7 +112,7 @@ public class UserController implements ErrorController {
         role1.setId("1");
         role1.setRole("Seller");
         roleService.addRole(role1);
-        System.out.println(roleService.getAllRole().toString());
+//        System.out.println(roleService.getAllRole().toString());
         return model;
     }
 
@@ -127,7 +127,7 @@ public class UserController implements ErrorController {
             return model;
         }
 
-        System.out.println("Login Password: " + user.getPassword() + " Encoded Password: " + backendUserOptional.get().getPassword());
+//        System.out.println("Login Password: " + user.getPassword() + " Encoded Password: " + backendUserOptional.get().getPassword());
         if (BCrypt.checkpw(user.getPassword(), backendUserOptional.get().getPassword())) {
             ModelAndView mv = new ModelAndView();
             mv.setViewName("userdetails");
@@ -227,7 +227,7 @@ public class UserController implements ErrorController {
     @RequestMapping(value = {"/logout"}, method = RequestMethod.GET)
     public ModelAndView logout(HttpSession session) {
         User u = (User) session.getAttribute("userSession");
-        System.out.println("SESSION OBJECT BEFORE invalidating: " + u);
+//        System.out.println("SESSION OBJECT BEFORE invalidating: " + u);
         session.invalidate();
         ModelAndView mv = new ModelAndView();
         User user = new User();
@@ -356,7 +356,7 @@ public class UserController implements ErrorController {
         model.setViewName("createBook");
         model.addObject("bookDTO", bookDTO);
 
-        System.out.println(bookDTO);
+//        System.out.println(bookDTO);
         Set<String> fileUrls = null;
         try {
             fileUrls = imageService.uploadPictures(files);
@@ -364,7 +364,7 @@ public class UserController implements ErrorController {
             e.printStackTrace();
         }
         //   if(!fileUrls.isEmpty())  bookDTO.setImageURLs(fileUrls.toString());
-        System.out.println(fileUrls.toString());
+//        System.out.println(fileUrls.toString());
         Set<Image> imageSet = new HashSet<>();
         for (String url : fileUrls) {
             Image image = new Image();
@@ -442,7 +442,7 @@ public class UserController implements ErrorController {
             }
             bookService.deleteBookById(bookId);
         }
-        System.out.println("Book Deleted" + book.getTitle());
+//        System.out.println("Book Deleted" + book.getTitle());
         response.sendRedirect("/books");
     }
 
@@ -480,7 +480,7 @@ public class UserController implements ErrorController {
     @RequestMapping(value = {"/addToCart/{bookId}"}, method = RequestMethod.GET)
 //    @RequestMapping(value = {"/xyz"}, method = RequestMethod.POST)
     public void addToCart(@PathVariable String bookId, HttpServletResponse response, HttpSession session) throws IOException {
-        System.out.println("Add to cart method.....................");
+//        System.out.println("Add to cart method.....................");
         User userSession = (User) session.getAttribute("userSession");
         if (userSession == null) {
             response.sendRedirect("/login");
@@ -511,8 +511,8 @@ public class UserController implements ErrorController {
         cart.setCartId(UUID.randomUUID().toString());
         cart.setQuantity(1);
         cartService.addBookToCart(cart);
-        System.out.println("Added To Cart, Book Id : " + bookId);
-        System.out.println("Cart OBJ: " + cart);
+//        System.out.println("Added To Cart, Book Id : " + bookId);
+//        System.out.println("Cart OBJ: " + cart);
 
         bookService.getBookById(bookId);
 
@@ -537,7 +537,7 @@ public class UserController implements ErrorController {
         if (sessionUser != null && sessionUser.getUsername().equals(sellerId))
             isSeller = true;
         //   List<Image> imageList = imageService.getImagesByBookId(bookId);
-        System.out.println("Image for book id:" + bookId);
+//        System.out.println("Image for book id:" + bookId);
         List<Image> imageList = imageService.getImagesByBookId(bookId);
 
         mv.addObject(imageList);
@@ -551,7 +551,7 @@ public class UserController implements ErrorController {
     @RequestMapping(value = {"/addNewImage/{bookId}"}, method = RequestMethod.POST)
     public void addNewImages(HttpServletResponse response, HttpSession session, @PathVariable String bookId, @RequestPart(value = "files") MultipartFile[] files) throws IOException {
 
-        System.out.println(bookId);
+//        System.out.println(bookId);
         Book book = bookService.getBookById(bookId);
         Set<String> fileUrls = null;
         try {
@@ -560,7 +560,7 @@ public class UserController implements ErrorController {
             e.printStackTrace();
         }
         //   if(!fileUrls.isEmpty())  bookDTO.setImageURLs(fileUrls.toString());
-        System.out.println(fileUrls.toString());
+//        System.out.println(fileUrls.toString());
         Set<Image> imageSet = new HashSet<>();
         for (String url : fileUrls) {
             Image image = new Image();
