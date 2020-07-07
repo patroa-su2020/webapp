@@ -30,6 +30,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import com.timgroup.statsd.StatsDClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @Controller
@@ -54,50 +57,80 @@ public class UserController implements ErrorController {
     @Autowired
     private ImageService imageService;
 
+    @Autowired
+    private StatsDClient statsDClient;
+
+    private final static Class<UserController> className = UserController.class;
+    private final static Logger logger = LoggerFactory.getLogger(className);
+
     public UserController() {
 
     }
 
+    private long startTime;
+    private long endTime;
+
     @RequestMapping(value = {"/signup"}, method = RequestMethod.GET)
     public ModelAndView getSignupPage() {
+        startTime = System.currentTimeMillis();
+        statsDClient.incrementCounter("endpoint.signup.http.GET");
         ModelAndView mv = new ModelAndView();
         User user = new User();
         mv.addObject("user", user);
         mv.setViewName("signup");
+        endTime=System.currentTimeMillis();
+        statsDClient.recordExecutionTime("endpoint.signup.http.GET", endTime-startTime);
+        logger.info("GET /signup >>> Class "+className);
+        logger.error("GET /signup >>> Class "+className);
+        logger.warn("GET /signup >>> Class "+className);
+
+
         return mv;
     }
 
     @RequestMapping(value = {"/signup"}, method = RequestMethod.POST)
     public ModelAndView createUser(@Valid User user, BindingResult bindingResult) {
+        startTime=System.currentTimeMillis();
+        statsDClient.incrementCounter("endpoint.signup.http.POST");
         ModelAndView mv = new ModelAndView();
         mv.setViewName("signup");
         try {
 
             if (isUserAlreadyRegistered(user.getUsername())) {
                 mv.addObject("alreadyRegistered", "User Account Already Exists!");
+                endTime=System.currentTimeMillis();
+                logger.info("POST /signup: user already exist >>> Class "+className);
                 return mv;
             }
 
             if (!isValidEmail(user.getUsername())) {
                 mv.addObject("invalidEmail", "Invalid Email Address");
+                endTime=System.currentTimeMillis();
                 return mv;
             }
 
             if (!isPasswordStrong(user.getPassword())) {
                 mv.addObject("weakPassword", "Password too weak!");
+                endTime=System.currentTimeMillis();
+                logger.info("POST /signup: weak password >>> Class "+className);
                 return mv;
             } else {
                 userService.addUser(user);
 
                 mv.addObject(user);
                 mv.addObject("msg", "User has been registered successfully!");
-
-//                System.out.println(user.getFirstName());
+                logger.info("POST /signup: user registration successful >>> Class "+className);
+                endTime=System.currentTimeMillis();
                 return mv;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.info("POST /signup: weak password >>> Class "+className+"Exception: "+ e.getMessage());
+            endTime=System.currentTimeMillis();
             return null;
+        }
+
+        finally {
+            statsDClient.recordExecutionTime("endpoint.signup.http.POST", endTime-startTime);
         }
     }
 
