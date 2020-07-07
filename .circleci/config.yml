@@ -83,7 +83,7 @@ jobs:
             ls -al
             cd ..
             chmod 755 artifacts
-            zip -r csye6225-webapp-${CIRCLE_BUILD_NUM}.zip target/webapp-0.0.1-SNAPSHOT.jar codedeploy/*.sh appspec.yml cloudwatch/cloudwatch-config.json
+            zip -r csye6225-webapp-${CIRCLE_BUILD_NUM}.zip target/webapp-0.0.1-SNAPSHOT.jar codedeploy/*.sh appspec.yml cloudwatch-config.json
             pwd
             ls -al
             chmod 755 csye6225-webapp-${CIRCLE_BUILD_NUM}.zip
