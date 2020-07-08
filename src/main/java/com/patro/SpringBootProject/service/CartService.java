@@ -23,7 +23,7 @@ public class CartService {
         startTime = System.currentTimeMillis();
         cartRepository.save(cart);
         endTime = System.currentTimeMillis();
-        statsDClient.recordExecutionTime("DB: add book to cart", startTime-endTime);
+        statsDClient.recordExecutionTime("DB add book to cart", startTime-endTime);
     }
 
     public List<Cart> getAllCartItems() {

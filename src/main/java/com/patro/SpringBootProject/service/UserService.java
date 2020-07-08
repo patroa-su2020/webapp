@@ -34,14 +34,14 @@ public class UserService {
         startTime = System.currentTimeMillis();
         userRepository.save(user);
         endTime = System.currentTimeMillis();
-        statsDClient.recordExecutionTime("DB: Add User", endTime-startTime);
+        statsDClient.recordExecutionTime("DB Add User", endTime-startTime);
     }
 
     public Optional<User> getUserByUsername(String username) {
         startTime = System.currentTimeMillis();
         Optional<User> backendUser = userRepository.findById(username);
         endTime = System.currentTimeMillis();
-        statsDClient.recordExecutionTime("DB: Get User", endTime-startTime);
+        statsDClient.recordExecutionTime("DB Get User", endTime-startTime);
         return backendUser;
     }
 
@@ -49,6 +49,6 @@ public class UserService {
         startTime = System.currentTimeMillis();
         userRepository.save(user);
         endTime = System.currentTimeMillis();
-        statsDClient.recordExecutionTime("DB: Update User", endTime-startTime);
+        statsDClient.recordExecutionTime("DB Update User", endTime-startTime);
     }
 }

@@ -24,7 +24,7 @@ public class BookService {
         startTime = System.currentTimeMillis();
         bookRepository.save(book);
         endTime = System.currentTimeMillis();
-        statsDClient.recordExecutionTime("DB: save book", endTime-startTime);
+        statsDClient.recordExecutionTime("DB save book", endTime-startTime);
     }
 
     public List<Book> getAllBooks() {
@@ -39,6 +39,6 @@ public class BookService {
         startTime = System.currentTimeMillis();
         bookRepository.deleteById(bookId);
         endTime = System.currentTimeMillis();
-        statsDClient.recordExecutionTime("DB: delete book", endTime-startTime);
+        statsDClient.recordExecutionTime("DB delete book", endTime-startTime);
     }
 }
