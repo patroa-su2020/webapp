@@ -568,7 +568,7 @@ public class UserController implements ErrorController {
         long dbStartTime = System.currentTimeMillis();
         List<Cart> backendCarts = cartService.getAllCartItems();
         long dbEndTime = System.currentTimeMillis();
-        statsDClient.recordExecutionTime("DB: get All Cart Items", dbEndTime - dbStartTime);
+        statsDClient.recordExecutionTime("DB get All Cart Items", dbEndTime - dbStartTime);
         for (Cart cart : backendCarts) {
             if (cart.getBuyerId().equals(sessionUser.getUsername())) {
                 // myBooks.add(bookService.getBookById(cart.getBookId()));
@@ -719,7 +719,7 @@ public class UserController implements ErrorController {
         long dbStartTime = System.currentTimeMillis();
         List<Book> books = bookService.getAllBooks();
         long dbEndTime = System.currentTimeMillis();
-        statsDClient.recordExecutionTime("DB: get all books", dbEndTime - dbStartTime);
+        statsDClient.recordExecutionTime("DB get all books", dbEndTime - dbStartTime);
 
         if (books.size() > 0) {
             Map<String, List<Book>> studlistGrouped = books.stream()

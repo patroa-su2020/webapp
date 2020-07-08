@@ -105,7 +105,7 @@ public class ImageService {
         amazonS3.putObject(new PutObjectRequest(bucketName, fileName, file)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
         endTime = System.currentTimeMillis();
-        statsDClient.recordExecutionTime("S3 Bucket: Upload Picture", endTime - startTime);
+        statsDClient.recordExecutionTime("S3 Bucket Upload Picture", endTime - startTime);
     }
 
     public String deleteFileFromS3Bucket(String fileUrl) {
@@ -113,7 +113,7 @@ public class ImageService {
         startTime = System.currentTimeMillis();
         amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
         endTime = System.currentTimeMillis();
-        statsDClient.recordExecutionTime("S3 Bucket: Delete Picture", endTime - startTime);
+        statsDClient.recordExecutionTime("S3 Bucket Delete Picture", endTime - startTime);
         return "Successfully deleted";
     }
 
@@ -133,7 +133,7 @@ public class ImageService {
         startTime = System.currentTimeMillis();
         imageRepository.deleteImageByImageId(imageId);
         endTime = System.currentTimeMillis();
-        statsDClient.recordExecutionTime("DB: delete image by image Id ",endTime-startTime);
+        statsDClient.recordExecutionTime("DB delete image by image Id ",endTime-startTime);
     }
 
     public Image getImageByImageId(String imageId) {
@@ -144,7 +144,7 @@ public class ImageService {
         startTime = System.currentTimeMillis();
         imageRepository.delete(image);
         endTime = System.currentTimeMillis();
-        statsDClient.recordExecutionTime("DB: delete image",endTime-startTime);
+        statsDClient.recordExecutionTime("DB delete image",endTime-startTime);
 
     }
 }
