@@ -73,7 +73,7 @@ public class UserController implements ErrorController {
     @RequestMapping(value = {"/signup"}, method = RequestMethod.GET)
     public ModelAndView getSignupPage() {
         startTime = System.currentTimeMillis();
-        statsDClient.incrementCounter("endpoint.signup.http.GET");
+//        statsDClient.incrementCounter("endpoint.signup.http.GET");
         ModelAndView mv = new ModelAndView();
         User user = new User();
         mv.addObject("user", user);
@@ -136,6 +136,7 @@ public class UserController implements ErrorController {
 
     @RequestMapping(value = {"/", "/login"}, method = RequestMethod.GET)
     public ModelAndView getLoginPage() {
+        startTime = System.currentTimeMillis();
         ModelAndView model = new ModelAndView();
         User user = new User();
         model.addObject("user", user);
@@ -145,18 +146,21 @@ public class UserController implements ErrorController {
         role1.setId("1");
         role1.setRole("Seller");
         roleService.addRole(role1);
-//        System.out.println(roleService.getAllRole().toString());
+        endTime = System.currentTimeMillis();
+        statsDClient.recordExecutionTime("endpoint./login.http.GET", endTime-startTime);
         return model;
     }
 
     @RequestMapping(value = {"/login"}, method = RequestMethod.POST)
     public ModelAndView validateUser(@Valid User user, BindingResult bindingResult, HttpSession session) {
+        startTime = System.currentTimeMillis();
         ModelAndView model = new ModelAndView();
         model.setViewName("login");
         Optional<User> backendUserOptional = userService.getUserByUsername(user.getUsername());
         if (!backendUserOptional.isPresent()) {
             model.addObject("noUser", "No user found");
-
+            endTime = System.currentTimeMillis();
+            statsDClient.recordExecutionTime("endpoint./login.http.POST",endTime-startTime);
             return model;
         }
 
@@ -168,9 +172,13 @@ public class UserController implements ErrorController {
             mv.addObject("user", backendUser);
             session.setAttribute("userSession", backendUser);
             mv.addObject("loginsuccessful", "User Logged In Successfully!");
+            endTime = System.currentTimeMillis();
+            statsDClient.recordExecutionTime("endpoint./login.http.POST",endTime-startTime);
             return mv;
         } else {
             model.addObject("incorrectPassword", "Incorrect Password");
+            endTime = System.currentTimeMillis();
+            statsDClient.recordExecutionTime("endpoint./login.http.POST",endTime-startTime);
             return model;
         }
 
@@ -178,74 +186,92 @@ public class UserController implements ErrorController {
 
     @RequestMapping(value = {"/userDetails"}, method = RequestMethod.GET)
     public ModelAndView getUserDetails(@Valid User user, HttpSession session) {
+        startTime = System.currentTimeMillis();
         ModelAndView mv = new ModelAndView();
         User userSessionObj = (User) session.getAttribute("userSession");
         if (userSessionObj == null) {
             mv.setViewName("accessdenied");
+            endTime = System.currentTimeMillis();
+            statsDClient.recordExecutionTime("endpoint./userDetails.http.GET",endTime-startTime);
             return mv;
         }
         mv.setViewName("userdetails");
         User newUser = userService.getUserByUsername(userSessionObj.getUsername()).get();
         mv.addObject("user", newUser);
+        statsDClient.recordExecutionTime("endpoint./userDetails.http.GET",endTime-startTime);
         return mv;
     }
 
     @RequestMapping(value = {"/update"}, method = RequestMethod.GET)
     public ModelAndView getUpdatePageByGetCall(@Valid User user, HttpSession session) {
+        startTime = System.currentTimeMillis();
         User sessionObj = (User) session.getAttribute("userSession");
         ModelAndView modelAndView = new ModelAndView();
         if (sessionObj == null) {
             modelAndView.setViewName("accessdenied");
+            endTime = System.currentTimeMillis();
+            statsDClient.recordExecutionTime("endpoint./update.http.GET",endTime-startTime);
             return modelAndView;
         }
 
         User newUser = userService.getUserByUsername(sessionObj.getUsername()).get();
         modelAndView.addObject("user", newUser);
         modelAndView.setViewName("update");
+        endTime = System.currentTimeMillis();
+        statsDClient.recordExecutionTime("endpoint./update.http.GET",endTime-startTime);
         return modelAndView;
     }
 
     @RequestMapping(value = {"/update"}, method = RequestMethod.POST)
     public ModelAndView getUpdatePage(HttpSession session) {
+        startTime = System.currentTimeMillis();
         User sessionObj = (User) session.getAttribute("userSession");
         ModelAndView modelAndView = new ModelAndView();
         if (sessionObj == null) {
             modelAndView.setViewName("accessdenied");
+            endTime = System.currentTimeMillis();
             return modelAndView;
         }
 
         User newUser = userService.getUserByUsername(sessionObj.getUsername()).get();
         modelAndView.addObject("user", newUser);
         modelAndView.setViewName("update");
+        endTime = System.currentTimeMillis();
         return modelAndView;
     }
 
     @RequestMapping(value = {"/saveupdate"}, method = RequestMethod.GET)
     public ModelAndView getUpdates(@Valid User user, HttpSession session) {
+        startTime = System.currentTimeMillis();
         ModelAndView modelAndView = new ModelAndView();
         User sessionObj = (User) session.getAttribute("userSession");
         if (sessionObj == null) {
             modelAndView.setViewName("accessdenied");
+            endTime = System.currentTimeMillis();
             return modelAndView;
         }
         User newUser = userService.getUserByUsername(sessionObj.getUsername()).get();
         modelAndView.addObject("user", newUser);
         modelAndView.setViewName("update");
+        endTime = System.currentTimeMillis();
         return modelAndView;
     }
 
     @RequestMapping(value = {"/saveupdate"}, method = RequestMethod.POST)
     public ModelAndView saveUpdates(@Valid User user, HttpSession session) {
+        startTime = System.currentTimeMillis();
         ModelAndView modelAndView = new ModelAndView();
         User sessionObj = (User) session.getAttribute("userSession");
         if (sessionObj == null) {
             modelAndView.setViewName("accessdenied");
+            endTime = System.currentTimeMillis();
             return modelAndView;
         }
         modelAndView.setViewName("update");
         modelAndView.addObject("user", user);
         if (!isPasswordStrong(user.getPassword())) {
             modelAndView.addObject("weakPassword", "Password too weak!");
+            endTime = System.currentTimeMillis();
             return modelAndView;
         }
 
@@ -254,19 +280,21 @@ public class UserController implements ErrorController {
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         userService.updateUserDetails(user);
         modelAndView.addObject("succesfulupdate", "User Details Updated Successfully");
+        endTime = System.currentTimeMillis();
         return modelAndView;
     }
 
     @RequestMapping(value = {"/logout"}, method = RequestMethod.GET)
     public ModelAndView logout(HttpSession session) {
+        startTime = System.currentTimeMillis();
         User u = (User) session.getAttribute("userSession");
-//        System.out.println("SESSION OBJECT BEFORE invalidating: " + u);
         session.invalidate();
         ModelAndView mv = new ModelAndView();
         User user = new User();
         mv.addObject("user", user);
 
         mv.setViewName("login");
+        endTime = System.currentTimeMillis();
         return mv;
     }
 
@@ -290,6 +318,7 @@ public class UserController implements ErrorController {
 
     @RequestMapping("/error")
     public ModelAndView handleError(HttpServletRequest httpServletRequest) {
+        startTime = System.currentTimeMillis();
         Object status = httpServletRequest.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
         ModelAndView mv = new ModelAndView();
         mv.setViewName("error");
@@ -302,6 +331,7 @@ public class UserController implements ErrorController {
                 mv.addObject("serverError", "InternalServerError");
             }
         }
+        endTime = System.currentTimeMillis();
         return mv;
     }
 
@@ -314,27 +344,31 @@ public class UserController implements ErrorController {
 
     @RequestMapping(value = {"/createBook"}, method = RequestMethod.GET)
     public ModelAndView getCreateBookPage(HttpSession session, @Valid BookDTO bookDTO, BindingResult bindingResult) {
+        startTime = System.currentTimeMillis();
         ModelAndView model = new ModelAndView();
         User sessionObj = (User) session.getAttribute("userSession");
         if (sessionObj == null) {
             model.setViewName("accessdenied");
+            endTime = System.currentTimeMillis();
             return model;
 
         }
         model.setViewName("createBook");
         model.addObject("bookDTO", bookDTO);
 
-
+        endTime = System.currentTimeMillis();
         return model;
 
     }
 
     @RequestMapping(value = {"/saveUpdateBook/{bookId}/{createDtTm}"}, method = RequestMethod.POST)
     public ModelAndView saveUpdatedBook(@Valid Book updateBook, @PathVariable String bookId, @PathVariable long createDtTm, HttpSession session) {
+        startTime = System.currentTimeMillis();
         ModelAndView model = new ModelAndView();
         User sessionUser = (User) session.getAttribute("userSession");
         if (sessionUser == null) {
             model.setViewName("accessdenied");
+            endTime = System.currentTimeMillis();
             return model;
         }
 
@@ -361,6 +395,7 @@ public class UserController implements ErrorController {
         model.addObject("saveUpdateSuccess", "Book Details Updated Successfully");
         model.addObject("updateBook", updateBook);
         bookService.saveBook(updateBook);
+        endTime = System.currentTimeMillis();
         return model;
 
     }
@@ -368,18 +403,14 @@ public class UserController implements ErrorController {
     @RequestMapping(value = {"/saveBook"}, method = RequestMethod.POST)
     public ModelAndView saveBook(HttpSession session, @Valid Book bookDTO, BindingResult bindingResult, @RequestPart(value = "files") MultipartFile[] files) {
 
-
+        startTime = System.currentTimeMillis();
         ModelAndView model = new ModelAndView();
         User sessionObj = (User) session.getAttribute("userSession");
-//        System.out.println(sessionObj);
         if (sessionObj == null) {
             model.setViewName("accessdenied");
+            endTime = System.currentTimeMillis();
             return model;
         }
-
-//        System.out.println(files[1].getOriginalFilename());
-//        System.out.println(files[0].getOriginalFilename());
-
 
         String bookId = UUID.randomUUID().toString();
         bookDTO.setBookId(bookId);
@@ -410,25 +441,30 @@ public class UserController implements ErrorController {
         //  bookDTO.setImages(imageSet);
         bookService.saveBook(bookDTO);
         model.addObject("saveSuccess", "New Book Created Successfully");
+        endTime = System.currentTimeMillis();
         return model;
 
     }
 
     @RequestMapping(value = {"/accessdenied"}, method = RequestMethod.GET)
     public ModelAndView getAccessDeniedPage() {
+        startTime = System.currentTimeMillis();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("accessdenied");
+        endTime = System.currentTimeMillis();
         return modelAndView;
     }
 
     @RequestMapping(value = {"/updateBook/{bookId}"}, method = RequestMethod.GET)
 //    @RequestMapping(value = {"/xyz"}, method = RequestMethod.POST)
     public ModelAndView updateBook(@PathVariable String bookId, HttpSession session) {
+        startTime = System.currentTimeMillis();
         ModelAndView mv = new ModelAndView();
         Book book = bookService.getBookById(bookId);
         User user = (User) session.getAttribute("userSession");
         if (user == null || !user.getUsername().equals(book.getSellerId())) {
             mv.setViewName("accessdenied");
+            endTime = System.currentTimeMillis();
             return mv;
         }
 //    public ModelAndView updateBook(@Valid BookDTO bookDTO) {
@@ -449,21 +485,19 @@ public class UserController implements ErrorController {
             mv.addObject("updateDtTm", "");
 
 
-//        System.out.println(book);
+        endTime = System.currentTimeMillis();
         return mv;
     }
 
 
     @RequestMapping(value = {"/deleteBook/{bookId}"}, method = RequestMethod.GET)
-    // @RequestMapping(value = {"/deleteBook/"}, method = RequestMethod.POST)
-//    @RequestMapping(value = {"/xyz"}, method = RequestMethod.POST)
-
     public void deleteBook(@PathVariable String bookId, HttpServletResponse response, HttpSession session) throws IOException {
-        //   public void deleteBook(@Valid Book book, HttpServletResponse response) throws IOException {
+        startTime = System.currentTimeMillis();
         User user = (User) session.getAttribute("userSession");
         Book book = bookService.getBookById(bookId);
         if (user == null || !book.getSellerId().equals(user.getUsername())) {
             response.sendRedirect("/accessdenied");
+            endTime = System.currentTimeMillis();
             return;
         }
 
@@ -475,16 +509,18 @@ public class UserController implements ErrorController {
             }
             bookService.deleteBookById(bookId);
         }
-//        System.out.println("Book Deleted" + book.getTitle());
+        endTime = System.currentTimeMillis();
         response.sendRedirect("/books");
     }
 
     @RequestMapping(value = {"/myCart"}, method = RequestMethod.GET)
     public ModelAndView getMyCartPage(HttpSession session) {
+        startTime = System.currentTimeMillis();
         ModelAndView mv = new ModelAndView();
         User sessionUser = (User) session.getAttribute("userSession");
         if (sessionUser == null) {
             mv.setViewName("accessdenied");
+            endTime = System.currentTimeMillis();
             return mv;
         }
         mv.setViewName("myCart");
@@ -505,6 +541,7 @@ public class UserController implements ErrorController {
         }
         mv.addObject("myBooks", myBooks);
         mv.addObject("cartDtos", cartDtos);
+        endTime = System.currentTimeMillis();
         return mv;
 
     }
@@ -513,10 +550,11 @@ public class UserController implements ErrorController {
     @RequestMapping(value = {"/addToCart/{bookId}"}, method = RequestMethod.GET)
 //    @RequestMapping(value = {"/xyz"}, method = RequestMethod.POST)
     public void addToCart(@PathVariable String bookId, HttpServletResponse response, HttpSession session) throws IOException {
-//        System.out.println("Add to cart method.....................");
+        startTime = System.currentTimeMillis();
         User userSession = (User) session.getAttribute("userSession");
         if (userSession == null) {
             response.sendRedirect("/login");
+            endTime = System.currentTimeMillis();
             return;
         }
 
@@ -527,29 +565,21 @@ public class UserController implements ErrorController {
             if (c.getBookId().equals(bookId) && c.getBuyerId().equals(userSession.getUsername())) {
                 c.setQuantity(c.getQuantity() + 1);
                 cartService.addBookToCart(c);
+                endTime = System.currentTimeMillis();
                 response.sendRedirect("/books");
                 return;
             }
         }
 
-
-//        Book book = bookService.getBookById(bookId);
-//        System.out.println(book);
-//        book.setQuantity(String.valueOf(Integer.parseInt(book.getQuantity()) - 1));
-//        bookService.saveBook(book);
-//        System.out.println("new book quantity: " + book.getQuantity() + "Book: " + book);
         Cart cart = new Cart();
         cart.setBookId(bookId);
         cart.setBuyerId(userSession.getUsername());
         cart.setCartId(UUID.randomUUID().toString());
         cart.setQuantity(1);
         cartService.addBookToCart(cart);
-//        System.out.println("Added To Cart, Book Id : " + bookId);
-//        System.out.println("Cart OBJ: " + cart);
 
         bookService.getBookById(bookId);
-
-
+        endTime = System.currentTimeMillis();
         response.sendRedirect("/myCart");
 
     }
@@ -563,37 +593,36 @@ public class UserController implements ErrorController {
 
     @RequestMapping(value = {"/viewImages/{bookId}/{sellerId}"}, method = RequestMethod.GET)
     public ModelAndView getImages(HttpSession session, @PathVariable String bookId, @PathVariable String sellerId) {
+        startTime = System.currentTimeMillis();
         boolean isSeller = false;
         ModelAndView mv = new ModelAndView();
         mv.setViewName("images");
         User sessionUser = (User) session.getAttribute("userSession");
         if (sessionUser != null && sessionUser.getUsername().equals(sellerId))
             isSeller = true;
-        //   List<Image> imageList = imageService.getImagesByBookId(bookId);
-//        System.out.println("Image for book id:" + bookId);
+
         List<Image> imageList = imageService.getImagesByBookId(bookId);
 
         mv.addObject(imageList);
         mv.addObject(bookId);
         mv.addObject("isSeller", isSeller);
-
+        endTime = System.currentTimeMillis();
         return mv;
 
     }
 
     @RequestMapping(value = {"/addNewImage/{bookId}"}, method = RequestMethod.POST)
     public void addNewImages(HttpServletResponse response, HttpSession session, @PathVariable String bookId, @RequestPart(value = "files") MultipartFile[] files) throws IOException {
-
-//        System.out.println(bookId);
+        startTime = System.currentTimeMillis();
         Book book = bookService.getBookById(bookId);
         Set<String> fileUrls = null;
         try {
             fileUrls = imageService.uploadPictures(files);
         } catch (IOException e) {
+            endTime = System.currentTimeMillis();
             e.printStackTrace();
         }
-        //   if(!fileUrls.isEmpty())  bookDTO.setImageURLs(fileUrls.toString());
-//        System.out.println(fileUrls.toString());
+
         Set<Image> imageSet = new HashSet<>();
         for (String url : fileUrls) {
             Image image = new Image();
@@ -604,17 +633,20 @@ public class UserController implements ErrorController {
 
 
         }
+        endTime = System.currentTimeMillis();
         response.sendRedirect("/viewImages/" + bookId + "/" + book.getSellerId());
         return;
     }
 
     @RequestMapping(value = {"/deleteImage/{imageId}/{bookId}"}, method = RequestMethod.GET)
     public void deleteImage(HttpSession session, @PathVariable String imageId, @PathVariable String bookId, HttpServletResponse response) throws IOException {
+        startTime = System.currentTimeMillis();
         ModelAndView mv = new ModelAndView();
         Image image = imageService.getImageByImageId(imageId);
         imageService.deleteFileFromS3Bucket(image.getImageUrl());
         imageService.deleteImage(image);
         Book book = bookService.getBookById(bookId);
+        endTime = System.currentTimeMillis();
         response.sendRedirect("/viewImages/" + bookId + "/" + book.getSellerId());
         return;
 
@@ -622,13 +654,10 @@ public class UserController implements ErrorController {
 
     @RequestMapping(value = {"/books"}, method = RequestMethod.GET)
     public ModelAndView getBooksPage(HttpSession session, @Valid Book book, BindingResult bindingResult) {
+        startTime = System.currentTimeMillis();
         ModelAndView mv = new ModelAndView();
+        statsDClient.incrementCounter("endpoint./books.http.GET");
         User userSession = (User) session.getAttribute("userSession");
-//        if (userSession == null) {
-//            mv.setViewName("accessdenied");
-//            return mv;
-//        }
-
         mv.setViewName("books");
         List<Book> books = bookService.getAllBooks();
 
@@ -658,6 +687,8 @@ public class UserController implements ErrorController {
         }
 
         mv.addObject("bookDtos", bookDTOS);
+        endTime = System.currentTimeMillis();
+        statsDClient.recordExecutionTime("endpoint./books.http.GET",endTime-startTime);
         return mv;
     }
 
