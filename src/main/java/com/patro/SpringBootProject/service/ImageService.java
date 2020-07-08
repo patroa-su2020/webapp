@@ -14,6 +14,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.patro.SpringBootProject.dao.ImageRepository;
 import com.patro.SpringBootProject.model.Cart;
 import com.patro.SpringBootProject.model.Image;
+import com.timgroup.statsd.StatsDClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,9 @@ import java.util.*;
 public class ImageService {
     @Autowired
     private ImageRepository imageRepository;
+
+    @Autowired
+    private StatsDClient statsDClient;
 
     @Value("${amazonProperties.endpointUrl}")
     private String endpointUrl;
@@ -48,6 +52,9 @@ public class ImageService {
 
 
     private AmazonS3 amazonS3;
+
+    private long startTime;
+    private long endTime;
 
     @PostConstruct
     private void initializeAmazon() {
@@ -94,35 +101,50 @@ public class ImageService {
     }
 
     private void uploadFileTos3bucket(String fileName, File file) {
+        startTime = System.currentTimeMillis();
         amazonS3.putObject(new PutObjectRequest(bucketName, fileName, file)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
+        endTime = System.currentTimeMillis();
+        statsDClient.recordExecutionTime("S3 Bucket: Upload Picture", endTime - startTime);
     }
 
     public String deleteFileFromS3Bucket(String fileUrl) {
         String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-        System.out.println(fileName);
-        amazonS3.deleteObject(new DeleteObjectRequest(bucketName , fileName));
+        startTime = System.currentTimeMillis();
+        amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
+        endTime = System.currentTimeMillis();
+        statsDClient.recordExecutionTime("S3 Bucket: Delete Picture", endTime - startTime);
         return "Successfully deleted";
     }
 
     public void addImages(Image image) {
+        startTime = System.currentTimeMillis();
         imageRepository.save(image);
+        endTime = System.currentTimeMillis();
+
     }
 
     public List<Image> getImagesByBookId(String bookId) {
+
         return (List<Image>) imageRepository.getImagesByBookId(bookId);
     }
 
     public void deleteImageByImageId(String imageId) {
+        startTime = System.currentTimeMillis();
         imageRepository.deleteImageByImageId(imageId);
+        endTime = System.currentTimeMillis();
+        statsDClient.recordExecutionTime("DB: delete image by image Id ",endTime-startTime);
     }
 
-    public Image getImageByImageId(String imageId)
-    {
+    public Image getImageByImageId(String imageId) {
         return imageRepository.getImageByImageId(imageId);
     }
 
     public void deleteImage(Image image) {
+        startTime = System.currentTimeMillis();
         imageRepository.delete(image);
+        endTime = System.currentTimeMillis();
+        statsDClient.recordExecutionTime("DB: delete image",endTime-startTime);
+
     }
 }
