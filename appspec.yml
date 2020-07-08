@@ -6,6 +6,8 @@ files:
     destination: /home/ubuntu
   - source: cloudwatch-config.json
     destination: /home/ubuntu/opt
+  - source: webapp.sh
+    destination: /usr/local/bin/
 
 
 hooks:
