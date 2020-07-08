@@ -11,15 +11,12 @@ import java.util.Optional;
 public class RoleService {
     @Autowired
     private RoleRepository roleRepository;
-    public void addRole(Role role)
-    {
+
+    public void addRole(Role role) {
         roleRepository.save(role);
     }
 
-    public String getAllRole()
-    {
-       return roleRepository.findAll().toString();
-   //     return roleRepository.findBooks().get(0);
-
+    public String getAllRole() {
+        return roleRepository.findAll().toString();
     }
 }
