@@ -32,7 +32,7 @@ restart)
       echo "$SERVICE_NAME stopped ...";
       rm $PID_PATH_NAME
       echo "$SERVICE_NAME starting ..."
-      nohup java -jar $PATH_TO_JAR /tmp 2>> /dev/null >> /dev/null &
+      nohup java -DDB_PASSWORD=Ankit#1992 -jar $PATH_TO_JAR /tmp 2>> /dev/null >> /dev/null &
       echo $! > $PID_PATH_NAME
       echo "$SERVICE_NAME started ..."
   else
