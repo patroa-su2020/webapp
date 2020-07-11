@@ -12,7 +12,7 @@ cd /home/ubuntu
 echo "Inside /home/ubuntu"
 nohup java -DDB_PASSWORD=Ankit#1992 -jar /home/ubuntu/webapp-0.0.1-SNAPSHOT.jar > /dev/null 2> /dev/null < /dev/null &
 START
-chmod 755 /home/ubuntu/applicationScript.sh
+chmod 777 /home/ubuntu/applicationScript.sh
 echo "applicationScript created"
 cd /etc/profile.d
 sudo cp /home/ubuntu/applicationScript.sh applicationScript.sh
