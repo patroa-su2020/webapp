@@ -10,7 +10,7 @@ sudo cat > applicationScript.sh << START
 #!/bin/bash
 cd /home/ubuntu
 echo "Inside /home/ubuntu"
-chmod 755 webapp-0.0.1-SNAPSHOT.jar
+sudo chmod 755 webapp-0.0.1-SNAPSHOT.jar
 nohup java -DDB_PASSWORD=Ankit#1992 -jar /home/ubuntu/webapp-0.0.1-SNAPSHOT.jar > /dev/null 2> /dev/null < /dev/null &
 START
 chmod 777 /home/ubuntu/applicationScript.sh
