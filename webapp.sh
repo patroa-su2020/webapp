@@ -41,4 +41,4 @@ PID_PATH_NAME=/tmp/webappService-pid
 # esac
 
 chmod 755 webapp-0.0.1-SNAPSHOT.jar
-java -DDB_PASSWORD=Ankit#1992 -jar webapp-0.0.1-SNAPSHOT.jar > /dev/null 2> /dev/null < /dev/null &
+nohup java -DDB_PASSWORD=Ankit#1992 -jar webapp-0.0.1-SNAPSHOT.jar > /dev/null 2> /dev/null < /dev/null &
