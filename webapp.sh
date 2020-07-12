@@ -1,7 +1,7 @@
 #!/bin/bash
-SERVICE_NAME=webappService
-PATH_TO_JAR=/home/ubuntu/webapp-0.0.1-SNAPSHOT.jar
-PID_PATH_NAME=/tmp/webappService-pid
+#SERVICE_NAME=webappService
+#PATH_TO_JAR=/home/ubuntu/webapp-0.0.1-SNAPSHOT.jar
+#PID_PATH_NAME=/tmp/webappService-pid
 #case $1 in
 #start)
 #       echo "Starting $SERVICE_NAME ..."
@@ -41,4 +41,4 @@ PID_PATH_NAME=/tmp/webappService-pid
 # esac
 
 chmod 755 webapp-0.0.1-SNAPSHOT.jar
-nohup java -DDB_PASSWORD=Ankit#1992 -jar webapp-0.0.1-SNAPSHOT.jar > /dev/null 2> /dev/null < /dev/null &
+nohup java -DDB_PASSWORD=Ankit#1992 -jar webapp-0.0.1-SNAPSHOT.jar > /home/ubuntu/output 2> /home/ubuntu/output < /home/ubuntu/output &
