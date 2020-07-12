@@ -17,6 +17,10 @@ chmod 777 /home/ubuntu/applicationScript.sh
 echo "applicationScript created"
 cd /etc/profile.d
 sudo cp /home/ubuntu/applicationScript.sh applicationScript.sh
+
+cd /etc/init.d
+sudo cp /home/ubuntu/applicationScript.sh applicationScript.sh
 sudo chmod 777 /etc/profile.d/applicationScript.sh
+sudo chmod 777 /etc/init.d/applicationScript.sh
 
 
