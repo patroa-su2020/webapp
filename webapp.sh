@@ -39,6 +39,6 @@
 #      echo "$SERVICE_NAME is not running ..."
 #     fi     ;;
 # esac
-
+cd ~
 chmod 755 webapp-0.0.1-SNAPSHOT.jar
-nohup java -DDB_PASSWORD=Ankit#1992 -jar webapp-0.0.1-SNAPSHOT.jar > /home/ubuntu/output 2> /home/ubuntu/output < /home/ubuntu/output &
+java -DDB_PASSWORD=Ankit#1992 -jar webapp-0.0.1-SNAPSHOT.jar > /home/ubuntu/output 2> /home/ubuntu/output < /home/ubuntu/output &
