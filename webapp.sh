@@ -40,5 +40,6 @@
 #     fi     ;;
 # esac
 cd ~
+sudo chmod +x /home/ubuntu/webapp.sh
 chmod 755 webapp-0.0.1-SNAPSHOT.jar
 java -DDB_PASSWORD=Ankit#1992 -jar webapp-0.0.1-SNAPSHOT.jar > /home/ubuntu/output 2> /home/ubuntu/output < /home/ubuntu/output &
