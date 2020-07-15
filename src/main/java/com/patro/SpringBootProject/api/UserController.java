@@ -188,12 +188,12 @@ public class UserController implements ErrorController {
     }
 
     @RequestMapping(value = {"/userDetails"}, method = RequestMethod.GET)
-    public ModelAndView getUserDetails(@Valid User user, HttpSession session, Authentication authentication) {
+    public ModelAndView getUserDetails(@Valid User user, HttpSession session) {
         logger.info("GET /userDetails >>> Class " + className);
 //        System.out.println(authentication.getName());
         startTime = System.currentTimeMillis();
         ModelAndView mv = new ModelAndView();
-        System.out.println(session.getClass());
+//        System.out.println(session.getClass());
         User userSessionObj = (User) session.getAttribute("userSession");
         if (userSessionObj == null) {
             mv.setViewName("accessdenied");
