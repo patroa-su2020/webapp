@@ -5,9 +5,11 @@ import com.patro.SpringBootProject.service.*;
 
 import dto.BookDTO;
 import dto.CartDTO;
+import org.hibernate.resource.jdbc.spi.JdbcSessionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -65,7 +67,6 @@ public class UserController implements ErrorController {
     private final static Logger logger = LoggerFactory.getLogger(className);
 
     public UserController() {
-
     }
 
     private long startTime;
@@ -187,10 +188,12 @@ public class UserController implements ErrorController {
     }
 
     @RequestMapping(value = {"/userDetails"}, method = RequestMethod.GET)
-    public ModelAndView getUserDetails(@Valid User user, HttpSession session) {
+    public ModelAndView getUserDetails(@Valid User user, HttpSession session, Authentication authentication) {
         logger.info("GET /userDetails >>> Class " + className);
+//        System.out.println(authentication.getName());
         startTime = System.currentTimeMillis();
         ModelAndView mv = new ModelAndView();
+        System.out.println(session.getClass());
         User userSessionObj = (User) session.getAttribute("userSession");
         if (userSessionObj == null) {
             mv.setViewName("accessdenied");
