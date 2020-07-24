@@ -96,10 +96,21 @@ public class UserController implements ErrorController {
         startTime = System.currentTimeMillis();
 
         ModelAndView mv = new ModelAndView();
+        mv.setViewName("forgotPassword");
+
+//        User backendUser = userService.getUserByUsername(user.getUsername()).get();
+        if(!userService.getUserByUsername(user.getUsername()).isPresent())
+        {
+            mv.addObject("noUser", true);
+            return mv;
+        }
+
         Boolean flag = Boolean.TRUE;
         mv.addObject("flag", flag);
 
-        mv.setViewName("forgotPassword");
+
+
+
         emailService.emailPasswordResetLink(user);
         endTime = System.currentTimeMillis();
         statsDClient.recordExecutionTime("endpoint.forgotPassword.http.GET", endTime - startTime);
