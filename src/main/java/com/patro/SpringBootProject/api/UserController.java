@@ -45,6 +45,8 @@ public class UserController implements ErrorController {
     @Autowired
     private BookService bookService;
 
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private RoleService roleService;
@@ -70,6 +72,42 @@ public class UserController implements ErrorController {
 
     private long startTime;
     private long endTime;
+
+    @RequestMapping(value = {"/forgotPassword"}, method = RequestMethod.GET)
+    public ModelAndView getForgotPasswordPage() {
+        startTime = System.currentTimeMillis();
+//        statsDClient.incrementCounter("endpoint.signup.http.GET");
+        ModelAndView mv = new ModelAndView();
+        User user = new User();
+        mv.addObject("user", user);
+        mv.setViewName("forgotPassword");
+        endTime = System.currentTimeMillis();
+        statsDClient.recordExecutionTime("endpoint.forgotPassword.http.GET", endTime - startTime);
+//        logger.info("GET /signup >>> Class " + className);
+//        logger.error("GET /signup >>> Class " + className);
+//        logger.warn("GET /signup >>> Class " + className);
+
+
+        return mv;
+    }
+
+    @RequestMapping(value = {"/forgotPassword"}, method = RequestMethod.POST)
+    public ModelAndView createPasswordResetLink(@Valid User user, BindingResult bindingResult) {
+        startTime = System.currentTimeMillis();
+
+        ModelAndView mv = new ModelAndView();
+        Boolean flag = Boolean.TRUE;
+        mv.addObject("flag", flag);
+
+        mv.setViewName("forgotPassword");
+        emailService.emailPasswordResetLink(user);
+        endTime = System.currentTimeMillis();
+        statsDClient.recordExecutionTime("endpoint.forgotPassword.http.GET", endTime - startTime);
+
+
+
+        return mv;
+    }
 
     @RequestMapping(value = {"/signup"}, method = RequestMethod.GET)
     public ModelAndView getSignupPage() {
