@@ -5,6 +5,7 @@ import com.patro.SpringBootProject.service.*;
 
 import dto.BookDTO;
 import dto.CartDTO;
+import org.springframework.beans.PropertyEditorRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,9 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.beans.PropertyEditor;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -640,7 +645,7 @@ public class UserController implements ErrorController {
 
 
     @RequestMapping(value = {"/addToCart/{bookId}"}, method = RequestMethod.GET)
-    public String addToCart(@PathVariable String bookId, HttpServletResponse response, HttpSession session) throws IOException {
+    public ModelAndView addToCart(@PathVariable String bookId, HttpServletResponse response, HttpSession session) throws IOException {
         logger.info("GET/addToCart/{bookId}  >>> Class >>> " + className);
         startTime = System.currentTimeMillis();
         User userSession = (User) session.getAttribute("userSession");
@@ -648,7 +653,7 @@ public class UserController implements ErrorController {
 //            response.sendRedirect("/login");
             endTime = System.currentTimeMillis();
             statsDClient.recordExecutionTime("endpoint.//addToCart/{bookId}.http.GET", endTime - startTime);
-            return "redirect:/login";
+            return getLoginPage();
 //            System.out.println(response.getHeaderNames());
 
 //            getLoginPage();
@@ -666,7 +671,192 @@ public class UserController implements ErrorController {
                 endTime = System.currentTimeMillis();
                 statsDClient.recordExecutionTime("endpoint.//addToCart/{bookId}.http.GET", endTime - startTime);
 //                response.sendRedirect("/books");
-                return "redirect:/books";
+                return getBooksPage(session, new Book(), new BindingResult() {
+                    @Override
+                    public Object getTarget() {
+                        return null;
+                    }
+
+                    @Override
+                    public Map<String, Object> getModel() {
+                        return null;
+                    }
+
+                    @Override
+                    public Object getRawFieldValue(String s) {
+                        return null;
+                    }
+
+                    @Override
+                    public PropertyEditor findEditor(String s, Class<?> aClass) {
+                        return null;
+                    }
+
+                    @Override
+                    public PropertyEditorRegistry getPropertyEditorRegistry() {
+                        return null;
+                    }
+
+                    @Override
+                    public String[] resolveMessageCodes(String s) {
+                        return new String[0];
+                    }
+
+                    @Override
+                    public String[] resolveMessageCodes(String s, String s1) {
+                        return new String[0];
+                    }
+
+                    @Override
+                    public void addError(ObjectError objectError) {
+
+                    }
+
+                    @Override
+                    public String getObjectName() {
+                        return null;
+                    }
+
+                    @Override
+                    public void setNestedPath(String s) {
+
+                    }
+
+                    @Override
+                    public String getNestedPath() {
+                        return null;
+                    }
+
+                    @Override
+                    public void pushNestedPath(String s) {
+
+                    }
+
+                    @Override
+                    public void popNestedPath() throws IllegalStateException {
+
+                    }
+
+                    @Override
+                    public void reject(String s) {
+
+                    }
+
+                    @Override
+                    public void reject(String s, String s1) {
+
+                    }
+
+                    @Override
+                    public void reject(String s, Object[] objects, String s1) {
+
+                    }
+
+                    @Override
+                    public void rejectValue(String s, String s1) {
+
+                    }
+
+                    @Override
+                    public void rejectValue(String s, String s1, String s2) {
+
+                    }
+
+                    @Override
+                    public void rejectValue(String s, String s1, Object[] objects, String s2) {
+
+                    }
+
+                    @Override
+                    public void addAllErrors(Errors errors) {
+
+                    }
+
+                    @Override
+                    public boolean hasErrors() {
+                        return false;
+                    }
+
+                    @Override
+                    public int getErrorCount() {
+                        return 0;
+                    }
+
+                    @Override
+                    public List<ObjectError> getAllErrors() {
+                        return null;
+                    }
+
+                    @Override
+                    public boolean hasGlobalErrors() {
+                        return false;
+                    }
+
+                    @Override
+                    public int getGlobalErrorCount() {
+                        return 0;
+                    }
+
+                    @Override
+                    public List<ObjectError> getGlobalErrors() {
+                        return null;
+                    }
+
+                    @Override
+                    public ObjectError getGlobalError() {
+                        return null;
+                    }
+
+                    @Override
+                    public boolean hasFieldErrors() {
+                        return false;
+                    }
+
+                    @Override
+                    public int getFieldErrorCount() {
+                        return 0;
+                    }
+
+                    @Override
+                    public List<FieldError> getFieldErrors() {
+                        return null;
+                    }
+
+                    @Override
+                    public FieldError getFieldError() {
+                        return null;
+                    }
+
+                    @Override
+                    public boolean hasFieldErrors(String s) {
+                        return false;
+                    }
+
+                    @Override
+                    public int getFieldErrorCount(String s) {
+                        return 0;
+                    }
+
+                    @Override
+                    public List<FieldError> getFieldErrors(String s) {
+                        return null;
+                    }
+
+                    @Override
+                    public FieldError getFieldError(String s) {
+                        return null;
+                    }
+
+                    @Override
+                    public Object getFieldValue(String s) {
+                        return null;
+                    }
+
+                    @Override
+                    public Class<?> getFieldType(String s) {
+                        return null;
+                    }
+                });
             }
         }
 
@@ -681,7 +871,7 @@ public class UserController implements ErrorController {
         endTime = System.currentTimeMillis();
         statsDClient.recordExecutionTime("endpoint.//addToCart/{bookId}.http.GET", endTime - startTime);
 //        response.sendRedirect("/myCart");
-        return "redirect:/myCart";
+        return getMyCartPage(session);
 
     }
 
