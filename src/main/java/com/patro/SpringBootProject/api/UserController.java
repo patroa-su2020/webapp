@@ -640,18 +640,20 @@ public class UserController implements ErrorController {
 
 
     @RequestMapping(value = {"/addToCart/{bookId}"}, method = RequestMethod.GET)
-    public void addToCart(@PathVariable String bookId, HttpServletResponse response, HttpSession session) throws IOException {
+    public String addToCart(@PathVariable String bookId, HttpServletResponse response, HttpSession session) throws IOException {
         logger.info("GET/addToCart/{bookId}  >>> Class >>> " + className);
         startTime = System.currentTimeMillis();
         User userSession = (User) session.getAttribute("userSession");
         if (userSession == null) {
-            response.sendRedirect("/login");
-            System.out.println(response.getHeaderNames());
-//response.set
-//            getLoginPage();
+//            response.sendRedirect("/login");
             endTime = System.currentTimeMillis();
             statsDClient.recordExecutionTime("endpoint.//addToCart/{bookId}.http.GET", endTime - startTime);
-            return;
+            return "redirect:/login";
+//            System.out.println(response.getHeaderNames());
+
+//            getLoginPage();
+
+//            return;
         }
 
 
@@ -663,8 +665,8 @@ public class UserController implements ErrorController {
                 cartService.addBookToCart(c);
                 endTime = System.currentTimeMillis();
                 statsDClient.recordExecutionTime("endpoint.//addToCart/{bookId}.http.GET", endTime - startTime);
-                response.sendRedirect("/books");
-                return;
+//                response.sendRedirect("/books");
+                return "redirect:/books";
             }
         }
 
@@ -678,7 +680,8 @@ public class UserController implements ErrorController {
         bookService.getBookById(bookId);
         endTime = System.currentTimeMillis();
         statsDClient.recordExecutionTime("endpoint.//addToCart/{bookId}.http.GET", endTime - startTime);
-        response.sendRedirect("/myCart");
+//        response.sendRedirect("/myCart");
+        return "redirect:/myCart";
 
     }
 
