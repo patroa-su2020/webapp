@@ -575,17 +575,19 @@ public class UserController implements ErrorController {
 
 
     @RequestMapping(value = {"/deleteBook/{bookId}"}, method = RequestMethod.GET)
-    public void deleteBook(@PathVariable String bookId, HttpServletResponse response, HttpSession session) throws IOException {
+    public ModelAndView deleteBook(@PathVariable String bookId, HttpServletResponse response, HttpSession session) throws IOException {
         logger.info("GET/deleteBook/{bookId}}  >>> Class >>> " + className);
 
         startTime = System.currentTimeMillis();
         User user = (User) session.getAttribute("userSession");
         Book book = bookService.getBookById(bookId);
         if (user == null || !book.getSellerId().equals(user.getUsername())) {
-            response.sendRedirect("/accessdenied");
+//            response.sendRedirect("/accessdenied");
             endTime = System.currentTimeMillis();
             statsDClient.recordExecutionTime("endpoint.//deleteBook/{bookId}.http.GET", endTime - startTime);
-            return;
+            return getAccessDeniedPage();
+
+//            return;
         }
 
         if (book != null) {
@@ -601,7 +603,193 @@ public class UserController implements ErrorController {
         }
         endTime = System.currentTimeMillis();
         statsDClient.recordExecutionTime("endpoint.//deleteBook/{bookId}.http.GET", endTime - startTime);
-        response.sendRedirect("/books");
+        //response.sendRedirect("/books");
+        return getBooksPage(session, new Book(), new BindingResult() {
+            @Override
+            public Object getTarget() {
+                return null;
+            }
+
+            @Override
+            public Map<String, Object> getModel() {
+                return null;
+            }
+
+            @Override
+            public Object getRawFieldValue(String s) {
+                return null;
+            }
+
+            @Override
+            public PropertyEditor findEditor(String s, Class<?> aClass) {
+                return null;
+            }
+
+            @Override
+            public PropertyEditorRegistry getPropertyEditorRegistry() {
+                return null;
+            }
+
+            @Override
+            public String[] resolveMessageCodes(String s) {
+                return new String[0];
+            }
+
+            @Override
+            public String[] resolveMessageCodes(String s, String s1) {
+                return new String[0];
+            }
+
+            @Override
+            public void addError(ObjectError objectError) {
+
+            }
+
+            @Override
+            public String getObjectName() {
+                return null;
+            }
+
+            @Override
+            public void setNestedPath(String s) {
+
+            }
+
+            @Override
+            public String getNestedPath() {
+                return null;
+            }
+
+            @Override
+            public void pushNestedPath(String s) {
+
+            }
+
+            @Override
+            public void popNestedPath() throws IllegalStateException {
+
+            }
+
+            @Override
+            public void reject(String s) {
+
+            }
+
+            @Override
+            public void reject(String s, String s1) {
+
+            }
+
+            @Override
+            public void reject(String s, Object[] objects, String s1) {
+
+            }
+
+            @Override
+            public void rejectValue(String s, String s1) {
+
+            }
+
+            @Override
+            public void rejectValue(String s, String s1, String s2) {
+
+            }
+
+            @Override
+            public void rejectValue(String s, String s1, Object[] objects, String s2) {
+
+            }
+
+            @Override
+            public void addAllErrors(Errors errors) {
+
+            }
+
+            @Override
+            public boolean hasErrors() {
+                return false;
+            }
+
+            @Override
+            public int getErrorCount() {
+                return 0;
+            }
+
+            @Override
+            public List<ObjectError> getAllErrors() {
+                return null;
+            }
+
+            @Override
+            public boolean hasGlobalErrors() {
+                return false;
+            }
+
+            @Override
+            public int getGlobalErrorCount() {
+                return 0;
+            }
+
+            @Override
+            public List<ObjectError> getGlobalErrors() {
+                return null;
+            }
+
+            @Override
+            public ObjectError getGlobalError() {
+                return null;
+            }
+
+            @Override
+            public boolean hasFieldErrors() {
+                return false;
+            }
+
+            @Override
+            public int getFieldErrorCount() {
+                return 0;
+            }
+
+            @Override
+            public List<FieldError> getFieldErrors() {
+                return null;
+            }
+
+            @Override
+            public FieldError getFieldError() {
+                return null;
+            }
+
+            @Override
+            public boolean hasFieldErrors(String s) {
+                return false;
+            }
+
+            @Override
+            public int getFieldErrorCount(String s) {
+                return 0;
+            }
+
+            @Override
+            public List<FieldError> getFieldErrors(String s) {
+                return null;
+            }
+
+            @Override
+            public FieldError getFieldError(String s) {
+                return null;
+            }
+
+            @Override
+            public Object getFieldValue(String s) {
+                return null;
+            }
+
+            @Override
+            public Class<?> getFieldType(String s) {
+                return null;
+            }
+        });
     }
 
     @RequestMapping(value = {"/myCart"}, method = RequestMethod.GET)
@@ -905,7 +1093,7 @@ public class UserController implements ErrorController {
     }
 
     @RequestMapping(value = {"/addNewImage/{bookId}"}, method = RequestMethod.POST)
-    public void addNewImages(HttpServletResponse response, HttpSession session, @PathVariable String bookId, @RequestPart(value = "files") MultipartFile[] files) throws IOException {
+    public ModelAndView addNewImages(HttpServletResponse response, HttpSession session, @PathVariable String bookId, @RequestPart(value = "files") MultipartFile[] files) throws IOException {
         logger.info("POST/addNewImage/{bookId}  >>> Class >>> " + className);
         startTime = System.currentTimeMillis();
         Book book = bookService.getBookById(bookId);
@@ -931,12 +1119,12 @@ public class UserController implements ErrorController {
         }
         endTime = System.currentTimeMillis();
         statsDClient.recordExecutionTime("endpoint.//addNewImage/{bookId}.http.POST", endTime - startTime);
-        response.sendRedirect("/viewImages/" + bookId + "/" + book.getSellerId());
-        return;
+//        response.sendRedirect("/viewImages/" + bookId + "/" + book.getSellerId());
+        return getImages(session, bookId, book.getSellerId());
     }
 
     @RequestMapping(value = {"/deleteImage/{imageId}/{bookId}"}, method = RequestMethod.GET)
-    public void deleteImage(HttpSession session, @PathVariable String imageId, @PathVariable String bookId, HttpServletResponse response) throws IOException {
+    public ModelAndView deleteImage(HttpSession session, @PathVariable String imageId, @PathVariable String bookId, HttpServletResponse response) throws IOException {
         logger.info("GET/deleteImage/{imageId}/{bookId}  >>> Class >>> " + className);
         startTime = System.currentTimeMillis();
         ModelAndView mv = new ModelAndView();
@@ -949,8 +1137,8 @@ public class UserController implements ErrorController {
         Book book = bookService.getBookById(bookId);
         endTime = System.currentTimeMillis();
         statsDClient.recordExecutionTime("endpoint.//deleteImage/{bookId}.http.GET", endTime - startTime);
-        response.sendRedirect("/viewImages/" + bookId + "/" + book.getSellerId());
-        return;
+//        response.sendRedirect("/viewImages/" + bookId + "/" + book.getSellerId());
+        return getImages(session,bookId, book.getSellerId());
 
     }
 
