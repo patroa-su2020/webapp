@@ -648,7 +648,7 @@ public class UserController implements ErrorController {
             response.sendRedirect("/login");
             System.out.println(response.getHeaderNames());
 //response.set
-            getLoginPage();
+//            getLoginPage();
             endTime = System.currentTimeMillis();
             statsDClient.recordExecutionTime("endpoint.//addToCart/{bookId}.http.GET", endTime - startTime);
             return;
