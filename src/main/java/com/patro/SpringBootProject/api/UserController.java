@@ -572,6 +572,7 @@ public class UserController implements ErrorController {
     @RequestMapping(value = {"/deleteBook/{bookId}"}, method = RequestMethod.GET)
     public void deleteBook(@PathVariable String bookId, HttpServletResponse response, HttpSession session) throws IOException {
         logger.info("GET/deleteBook/{bookId}}  >>> Class >>> " + className);
+
         startTime = System.currentTimeMillis();
         User user = (User) session.getAttribute("userSession");
         Book book = bookService.getBookById(bookId);
@@ -645,6 +646,9 @@ public class UserController implements ErrorController {
         User userSession = (User) session.getAttribute("userSession");
         if (userSession == null) {
             response.sendRedirect("/login");
+            System.out.println(response.getHeaderNames());
+//response.set
+            getLoginPage();
             endTime = System.currentTimeMillis();
             statsDClient.recordExecutionTime("endpoint.//addToCart/{bookId}.http.GET", endTime - startTime);
             return;
