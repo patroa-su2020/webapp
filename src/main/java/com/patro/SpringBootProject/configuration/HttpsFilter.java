@@ -31,10 +31,13 @@ public class HttpsFilter implements Filter {
             response.setContentType("text/html");
 
 // New location to be redirected
-            String httpsPath = "https" + "://" + getDomain + ":" + getPort
+            String httpsPath = "https" + "://" + getDomain + ":"
+                 //   + getPort
                     + uri;
 
             String site = new String(httpsPath);
+
+
             res.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
             res.setHeader("Location", site);
         }
